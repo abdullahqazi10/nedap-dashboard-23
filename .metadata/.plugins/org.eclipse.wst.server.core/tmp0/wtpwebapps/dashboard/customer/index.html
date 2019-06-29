@@ -1,0 +1,306 @@
+	<head>
+		<title>Nedap | Tracker</title>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+		<link rel="stylesheet" href="css/style-dashboard.css" />
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script type="text/javascript">
+
+			google.charts.load('current', {'packages':['corechart', 'table']});
+			var cookie;
+			var organizationID;
+			var customerName;
+
+			document.onload = function(){
+				document.getElementById("username").innerHTML = sessionStorage.getItem("name");
+    			document.getElementById("default-tab").click();
+    			draw();
+			}
+
+			function draw(){
+	    		populateTable();
+	    		//drawAreaChart();
+			    //drawDonutChart();
+	    	}
+
+			function populateTable() {
+
+        		var tableData = new google.visualization.DataTable();
+        		tableData.addColumn('string', 'JOB ID');
+        		tableData.addColumn('string', 'COMPANY');
+        		tableData.addColumn('string', 'KEY');
+        		tableData.addColumn('string', 'JOB NAME');
+        		tableData.addColumn('string', 'STATUS');
+
+
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						var jobs = JSON.parse(this.responseText);
+						tableData.addRows(jobs.length);
+
+						var counter = 0;
+						for (job in jobs) {
+							tableData.addRow(counter, 0, jobs[job].jobInstanceID);
+							tableData.addRow(counter, 1, jobs[job].organizationName);
+							tableData.addRow(counter, 2, jobs[job].jobKey);
+							tableData.addRow(counter, 3, jobs[job].jobName);
+							tableData.addRow(counter, 4, jobs[job].status);
+							exeMapping[jobs[x].jobInstanceID] = jobs[x].links[1].link;
+							counter += 1;
+						}
+						drawTable(tableData);
+					};
+				}
+
+				xhr.open("GET","http://localhost:8080/dashboard/rest/organizations/" + sessionStorage.getItem("organization") + "/jobs", true);
+				xhr.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("JWT"));
+				xhr.setRequestHeader('Accept', 'application/json');
+				xhr.send();
+      		}
+
+
+			
+			function drawTable(tableData) {
+
+				var options = {	showRowNumber: false,
+        						width: '100%', 
+        						height: '100%',
+        						allowHtml: true,
+        						page: 'enable',
+        						pageSize: 20,
+        						pagingSymbols: {prev: 'prev', next: 'next'}
+        					}
+
+        		table = new google.visualization.Table(document.getElementById('table'));
+        		table.draw(tableData, options);
+
+        		google.visualization.events.addListener(table, 'select', function() {
+    				var row = table.getSelection()[0].row;
+    				alert("You have selected a row");
+  				});
+			}
+
+      		function drawAreaChart() {
+        		var linedata = google.visualization.arrayToDataTable([
+          			['Week', 'Completed', 'Failed'],
+          			['1',  1000,      40],
+          			['2',  1170,      46],
+          			['3',  660,       11],
+          			['4',  1030,      54]
+        		]);
+
+        		var options = {
+          			title: 'Successful/Failed Jobs by TIme',
+          			hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
+          			colors: ['green', 'red'], 
+          			vAxis: {minValue: 0, title:'Number of Jobs'},
+          			width: 1000,
+        			height: 500
+        		};
+
+        		var chart = new google.visualization.AreaChart(document.getElementById('line-graph'));
+        		chart.draw(linedata, options);
+      		}
+
+      		function drawDonutChart() {
+
+      			var s = tabledata.getFilteredRows([{column: 4, value: 'COMPLETED'}]).length;
+      			var f = tabledata.getFilteredRows([{column: 4, value: 'FAILED'}]).length;
+
+      			var donutdata = google.visualization.arrayToDataTable([
+          				['Status', 'Number of Jobs'],
+          				['Completed', s],
+          				['Failed', f]
+        			]);
+
+        		var options = {
+          			title: 'Break Up of Total Jobs',
+          			pieHole: 0.4,
+          			colors: ['lightgreen', 'salmon'],
+          			width: 400,
+          			height: 400,
+          			legend: {position: 'bottom', textStyle: {color: 'blue', fontSize: 16}}
+        		};
+
+        		var chart = new google.visualization.PieChart(document.getElementById('donut-chart'));
+        		chart.draw(donutdata, options);
+      		}
+
+			function openTab(evt, tabName) {
+			    var i, tabcontent, tablinks;
+			    tabcontent = document.getElementsByClassName("tabcontent");
+			    for (i = 0; i < tabcontent.length; i++) {
+			    	tabcontent[i].style.display = "none";
+			    }
+			    tablinks = document.getElementsByClassName("tablinks btn-block");
+			    for (i = 0; i < tablinks.length; i++) {
+			        tablinks[i].className = tablinks[i].className.replace(" active", "");
+			    }
+			    document.getElementById(tabName).style.display = "block";
+			    evt.currentTarget.className += " active";
+			}
+		</script>
+	</head>
+	<body>
+		<div class="modal fade modal-container" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  			<div class="modal-dialog modal-xl">
+  			</div>
+		</div>
+		<header class="page-header">
+			<a href="#">
+				<i class="fas fa-code code-icon"></i>
+			</a>
+			<a href="https://nedap.com/" target="_blank">
+				<img  class="nav-logo" src="pictures/logos/nlgw.png" style="position:absolute; width:160px; height:auto; left: 0; right: 0; top:0; bottom:0; vertical-align: middle; margin:auto;">
+			</a>
+			<div class="user-details" style="color: white;">
+				<i class="fas fa-user" style="font-size: 2vw; position: absolute; top:15%; bottom:30%; vertical-align: middle; margin:auto;"></i>
+				<h5 style="font-size: 1vw; position: absolute; top:10%; left: 20%;" id=username></h5>
+				<h6 style="font-size: 0.7vw; position: absolute; top:50%; left: 20%;" id=organization></h6>
+			</div>
+		</header>
+		<main class="page-main">
+			<div class="sidebar" id="sidebar">
+				<nav class="sidebar-nav">
+					<div class="nav">
+						<button class="tablinks btn-block" onclick="openTab(event, 'home-tab')" id="default-tab">
+							<i class="fas fa-database"></i>
+							&nbsp;&nbsp;
+							Home
+							<i class="fas fa-arrow-right" id="arrow-appear"></i>
+						</button>
+						<button class="tablinks btn-block" onclick="openTab(event, 'graph-tab')">
+							<i class="fas fa-chart-pie" aria-hidden="true"></i>
+							&nbsp;&nbsp;
+							Graphs
+							<i class="fas fa-arrow-right" id="arrow-appear"></i>
+						</button>
+						<button class="tablinks btn-block" onclick="openTab(event, 'faq-tab')">
+							<i class="fas fa-question" aria-hidden="true"></i>
+							&nbsp;&nbsp;
+							Help
+							<i class="fas fa-arrow-right" id="arrow-appear"></i>
+						</button>
+						<a class="nav-link btn-block logout-button" href="#">
+							<i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+							&nbsp;&nbsp;
+							LOG OUT
+						</a>
+      					<a class="nav-link btn-block contact-button" href="https://nedap.com/investors/contact/" target="_blank">
+							<i class="fas fa-mobile-alt" aria-hidden="true"></i>
+							&nbsp;&nbsp;
+							Contact Us
+						</a>
+					</div>
+				</nav>
+			</div>
+			<div class="content">
+				<div class="home-tab tabcontent google-visualization-controls-theme-plus"  id="home-tab">
+					<div class="filters shadow">
+						<div id="search"></div>	
+						<div id="filter"></div>
+					</div>
+					<div class="table shadow" id="table"></div>
+				</div>
+				<div class="graph-tab tabcontent" id="graph-tab">
+					<div class="all-job-count shadow">
+						<h6 style="color: #302b63;"> <i class="fas fa-crosshairs"></i> All Jobs Last Week</h6>
+					</div>
+					<div class="successful-job-count shadow">
+						<h6 style="color: green;"> <i class="fas fa-check"></i> Successful Jobs Last Week</h6>
+					</div>
+					<div class="failed-job-count shadow">
+						<h6 style="color: red;"> <i class="fas fa-times"></i> Failed Jobs Last Week</h6>
+					</div>
+					<div class="ongoing-job-count shadow">
+						<h6 style="color: #302b63;"> <i class="fas fa-clock"></i> Ongoing Jobs</h6>
+					</div>
+					<div class="line-chart shadow" id="line-chart">
+						<h6 style="color: #302b63;"> <i class="far fa-clock"></i> Jobs By Time</h6>
+						<div id="line-graph"></div>
+					</div>
+					<div class="pie-chart shadow" id="pie-chart">
+						<h6 style="color: #302b63;"> <i class="fas fa-percentage"></i> Distribution of Jobs</h6>
+						<div id="donut-chart" style="position: absolute; left: 8%;"></div>
+					</div>
+				</div>
+				<section class="accordion-section clearfix mt-3" aria-label="Question Accordions">
+					<div class="container">
+						<h4 style="color:#023a4f;"> Frequently Asked Questions</h4>
+							<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+								<div class="panel panel-default">
+									<div class="panel-heading p-3 mb-3" role="tab" id="heading0">
+										<h3 class="panel-title">
+											<a class="collapsed" role="button" title="" data-toggle="collapse" data-parent="#accordion" href="#collapse0" aria-expanded="true" aria-controls="collapse0">
+											How can i view more in depth details about the job execution?
+											</a>
+										</h3>
+									</div>
+										<div id="collapse0" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
+											<div class="panel-body px-3 mb-4">
+												<p>By clicking on a job of your interest, a modal will be displayed from where you can access a timeline with the step executions and parameters. An exit code can also be viewed which shows error arose in case of a failed execution</p>
+											</div>
+										</div>
+								</div>
+								
+								<div class="panel panel-default">
+									<div class="panel-heading p-3 mb-3" role="tab" id="heading0">
+										<h3 class="panel-title">
+											<a class="collapsed" role="button" title="" data-toggle="collapse" data-parent="#accordion" href="#collapse1" aria-expanded="true" aria-controls="collapse1">
+											What filters am I able to search by?
+											</a>
+										</h3>
+									</div>
+										<div id="collapse1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
+											<div class="panel-body px-3 mb-4">
+												<p>The Nedap Job Tracker provides your organization with multiple filters to allow easy tracking of your jobs.The filters which are avaliable to use are Order By:
+													<ul>
+													<li>Organization Name </li>
+													<li> Key </li>
+													<li> Status of completion </li>
+													A search bar is also in place, allowing user input to directly access certain attributes
+												</p>
+											</div>
+										</div>
+								</div>
+								<div class="panel panel-default">
+									<div class="panel-heading p-3 mb-3" role="tab" id="heading0">
+										<h3 class="panel-title">
+											<a class="collapsed" role="button" title="" data-toggle="collapse" data-parent="#accordion" href="#collapse2" aria-expanded="true" aria-controls="collapse2">
+											How long will it take for my restart request to be processed?
+											</a>
+										</h3>
+									</div>
+										<div id="collapse2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
+											<div class="panel-body px-3 mb-4">
+												<p>A restart request is attended to as soon as possible. Depending on the need and priority, a request can be procssed with 3-5 business days</p>
+											</div>
+										</div>
+								</div>
+								<div class="panel panel-default">
+									<div class="panel-heading p-3 mb-3" role="tab" id="heading0">
+										<h3 class="panel-title">
+											<a class="collapsed" role="button" title="" data-toggle="collapse" data-parent="#accordion" href="#collapse3" aria-expanded="true" aria-controls="collapse3">
+											I do not see a question I have on the FAQ
+											</a>
+										</h3>
+									</div>
+										<div id="collapse3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
+											<div class="panel-body px-3 mb-4">
+												<p> If you have any questions or concerns then please do not hesitate to contact us. We will try to respond to you as soon as we possibly can</p>
+											</div>
+										</div>
+								</div>
+							</div>
+				  </section>
+		</main>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</body>
+</html>

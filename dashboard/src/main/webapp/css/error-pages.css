@@ -1,0 +1,55 @@
+#notfound {
+  position: relative;
+  height: 100vh;
+  background: #f4f4f4;
+}
+
+.notfound .notfound-error .notfound-error {
+  position: relative;
+  height: 180px;
+}
+
+
+#notfound .notfound {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.notfound {
+  max-width: 767px;
+  width: 100%;
+  line-height: 1.4;
+  padding: 110px 40px;
+  text-align: center;
+  background: #fff;
+   box-shadow: 0 15px 15px -10px rgba(0, 0, 0, 0.1);
+}
+ 
+ .notfound-error h1  {
+  font-family: 'Roboto', sans-serif;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  font-size: 165px;
+  font-weight: 600;
+  margin: 0px;
+  color: #2c87bb;
+  transform: translate(-50%, -50%);
+  text-transform: uppercase;
+}
+
+.notfound h2 {
+  font-size: 22px;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: #151515;
+  margin-top: 0px;
+  margin-bottom: 25px;
+}
+
+ a :hover {
+	color: #023a4f;
+
+}

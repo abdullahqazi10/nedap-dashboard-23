@@ -1,0 +1,474 @@
+html, body{
+	margin: 0;
+	padding: 0;
+}
+
+.page-header{
+	position: absolute;
+	width: 100%;
+	height: 8%;
+	display: flex;
+	background: #0f0c29;
+    background: -webkit-linear-gradient(to right, #24243e, #302b63, #0f0c29);
+    background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+}
+
+.code-icon{
+	position:absolute;
+	left: 20px; 
+	top:30%; 
+	bottom: 30%;
+	margin:auto;
+	color: #2d7cfc;
+	font-size: 30px;
+	transform-origin: center;
+	transition: 0.5s;
+}
+
+.code-icon:hover{
+	transform-origin: center;
+	-webkit-transform: rotate(-180deg);
+	color: #2d7cfc;
+	transition: 0.5s;
+}
+
+.user-details{
+	position: absolute;
+	top: 10%;
+	height: 80%;
+	bottom: 10%;
+	right: 20px;
+	width: 15%;
+	background-color: transparent;
+}
+
+main{
+	position: absolute;
+	top: 8%;
+	width: 100%;
+	height: 92%;
+	display: flex;
+}
+
+.sidebar{
+	position: absolute;
+	top: 0;
+	width: 12%;
+	height: 100%;
+	font-size: 15px;
+	background: #303030;
+}
+
+.sidebar button{
+	padding-top: 12px;
+	padding-left: 20px;
+	padding-bottom: 12px;
+	text-align: left;
+	border:none;
+	outline: none;
+	background: transparent;
+	color: gainsboro;
+	transition: 0.5s;
+}
+
+.sidebar button #arrow-appear{
+	position: absolute;
+	padding-top: 4px;
+	left: 60%; 
+	color: #303030;
+	transition: 0.5s;
+}
+
+.sidebar button:hover{
+	color: white;
+	transition: 0.5s;
+}
+
+.sidebar button:hover #arrow-appear{
+	color: white;
+	left: 80%;
+	transition: 0.5s;
+}
+
+.sidebar button.active{
+	color: #ff6c37;
+	background: #484848;
+}
+
+.sidebar button.active #arrow-appear{
+	color: #ff6c37;
+	left: 80%;
+	transition: 0.5s;
+}
+
+.logout-button{
+	position: absolute;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	bottom: 50px;
+	color: white;
+	background-color: #484848;
+	transition: 0.5s;
+}
+
+.contact-button{
+	position: absolute;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	bottom: 0;
+	width: 100%;
+	color: white;
+	background-color: #ff6c37;
+	transition: 0.5s;
+}
+
+.content{
+	position: absolute;
+	top: 0;
+	left: 12%;
+	width: 88%;
+	height: 100%;
+	background: aliceblue;
+}
+
+.home-tab, .graph-tab, .faq-tab{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: aliceblue;
+}
+
+.filters{
+	position: absolute;
+	top: 2.5%;
+	height: 5%;
+	left: 2.5%;
+	width: 95%;
+	right: 2.5%;
+	border-radius: 5px;
+	background: white;
+}
+
+.filterbar{
+	position: absolute;
+	top: 12%;
+	left: 61%;
+	width: 29%;
+	height: 66%;
+}
+
+#startDate{
+	position: absolute;
+	left: 80.3%;
+	width: 19.4%;
+	top: 0;
+	bottom: 0;
+	vertical-align: middle;
+	margin: auto;
+}
+
+.job-status-filter{
+	position: absolute;
+	left: 80.3%;
+	width: 19.4%;
+	top: 0;
+	bottom: 0;
+	vertical-align: middle;
+	margin: auto;
+}
+
+.table{
+	position: absolute;
+	top:10%;
+	max-height: 87.5%;
+	left: 2.5%;
+	width: 95%;
+	right: 2.5%;
+	border-radius: 5px;
+	background: white;
+}
+
+.dark-header{
+	background-color: white;
+	background: white;
+	border: none;
+	outline: none;
+	color: black;
+	filter: none;
+	text-align: top;
+	border-radius: 5px 5px 0 0;
+	height: 40px;
+}
+
+.white-row{
+	background: white;
+}
+
+.gray-row{
+	background: gainsboro;
+}
+
+.left-text{
+	text-align: left;
+}
+
+.bottom-border-only{
+	border: none;
+	outline: none;
+	border-bottom: 1px gainsboro;
+}
+
+.font-format{
+	font-size: 16px;
+}
+
+.counts{
+	font-size: 80px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.all-job-count{
+	position: absolute;
+	top: 2.5%;
+	left: 2.5%;
+	width: 21.875%;
+	height: 25%;
+	padding: 10px;
+	border-radius: 5px;
+	background: white;
+}
+
+.successful-job-count{
+	position: absolute;
+	top: 2.5%;
+	left: 26.875%;
+	width: 21.875%;
+	height: 25%;
+	padding: 10px;
+	border-radius: 5px;
+	background: white;
+}
+
+.failed-job-count{
+	position: absolute;
+	top: 2.5%;
+	left: 51.25%;
+	width: 21.875%;
+	height: 25%;
+	padding: 10px;
+	border-radius: 5px;
+	background: white;
+}
+
+.ongoing-job-count{
+	position: absolute;
+	top: 2.5%;
+	left: 75.625%;
+	width: 21.875%;
+	height: 25%;
+	padding: 10px;
+	border-radius: 5px;
+	background: white;
+}
+
+.line-chart{
+	position: absolute;
+	top: 30%;
+	left: 2.5%;
+	width: 65%;
+	height: 67.5%;
+	padding: 10px;
+	border-radius: 5px;
+	background: white;
+}
+
+.pie-chart{
+	position: absolute;
+	top: 30%;
+	left:70%;
+	width:27.5%;
+	height: 67.5%;
+	padding: 10px;
+	border-radius: 5px;
+	background: white;
+}
+
+.detailed-job-exec{
+	position: absolute;
+	top: 2.5%;
+	left: 2.5%;
+	width: 95%;
+	height: 20%;
+	white-space: nowrap;
+	overflow-x: scroll;
+	overflow-y: hidden;
+	background: transparent;
+	display: inline-block;
+	-webkit-overflow-scrolling: touch;
+}
+
+.detailed-execution{
+	background: white;
+	border: none;
+	outline: none;
+	text-align: left;
+	margin: 1%;
+	padding-left: 2%;
+	height: 80%;
+	width: 20%;
+	display: inline-block;
+	border-radius: 5px;
+	zoom: 1;
+}
+
+.detailed-step-exec{
+	position: absolute;
+	top:25%;
+	left: 3.5%;
+	width: 60%;
+	max-height: 70%;
+	border-radius: 5px;
+	background: white;
+	overflow-y: scroll;
+}
+
+#step-exec-table{
+	width: 100%;
+	
+}
+
+#step-exec-table thead tr{
+	line-height: 3;
+	padding-left: 5%;
+	border-radius: 5px 5px 0 0;
+}
+
+#step-exec-table thead tr th{
+	padding-left: 5%;
+}
+
+#step-exec-table tbody tr{
+	line-height: 2;
+}
+
+#step-exec-table tbody tr:hover{
+	cursor: pointer;
+}
+
+#step-exec-table tbody tr td{
+	padding-left: 5%;
+}
+
+#step-exec-table tbody tr:nth-child(odd){
+	background: #eee;
+}
+
+.detailed-step-exec-info{
+	position: absolute;
+	top:25%;
+	left: 66%;
+	width: 30.5%;
+	height: 70%;
+	max-height: 70%;
+	border-radius: 5px;
+	background: white;
+}
+
+::-webkit-scrollbar {
+    height: 3px;
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: gainsboro;
+}
+
+#failed-execution {
+    display:inline-block;
+    background: red;
+    border:1px solid red;
+    padding:3px;
+    border-radius: 10px;
+    color: white;
+}
+
+#completed-execution {
+    display:inline-block;
+    background: green;
+    border:1px solid green;
+    padding:3px;
+    border-radius: 10px;
+    color: white;
+}
+
+.accordion-section .panel-default > .panel-heading {
+
+	border: 0;
+
+	background: #FFF;
+
+	padding: 0;
+
+	padding: 10px;
+
+	border-radius: 5px;
+	background: white;
+
+width: 75%;
+margin-left: 1%;
+}
+
+.accordion-section .panel-default .panel-title a {
+
+	display: block;
+
+	font-style: italic;
+
+	font-size: 1.3rem;
+
+color: #3c97cb;
+}
+
+
+.accordion-section .panel-default .panel-title a:after {
+
+	font-family: 'FontAwesome';
+
+	font-style: normal;
+
+	font-size: 3rem;
+content: "\f106";
+
+	color: #1f7de2;
+
+	float: right;
+
+margin-top: -12px;
+
+visibility: hidden
+}
+
+
+.accordion-section .panel-default .panel-title a.collapsed:after {
+
+content: "\f107";
+
+}
+
+h2 {
+  text-align: center;
+/*  left: 10%;
+*/}
+
+
+.accordion-section .panel-default .panel-body {
+
+	font-size: 1.2rem;
+
+width: 75%;
+color: #023a4f;
+margin-left: 1%;
+}

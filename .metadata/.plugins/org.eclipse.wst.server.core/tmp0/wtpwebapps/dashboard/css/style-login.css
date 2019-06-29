@@ -1,0 +1,152 @@
+nav {
+    position: fixed;
+    width: 100%;
+    top:0;
+    left:0;
+    height:8%;
+    display: flex;
+    background: rgb(0, 0, 0, 0.4); 
+} 
+
+nav ul {
+    list-style: none;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline-block;
+}
+
+nav ul li a {
+    line-height: 1;
+    color: white;
+    font-size: 0.75vw;
+    font-family: Noto Sans, sans-serif;
+    font-weight: 700;
+    margin: 0 40px;
+    position: relative;
+    top:5px;
+    border: transparent;
+}
+
+nav:hover {
+    background: white;
+
+}
+
+nav:hover a img {
+    content: url('../pictures/logos/nlgb.png');
+}
+
+nav:hover ul li a {
+    color: #023a4f;
+}
+
+
+nav ul li a:hover, .main-text a:hover {
+    color: #ff6c37;
+}
+
+.home-main-container {
+    position: absolute;
+    top: 15%;
+    left: 5%;
+    width: 55%;
+    height:80%;
+}
+
+#main-center-text {
+    color: #ff6c37; 
+    font-family:  Noto Sans, sans-serif;
+    font-size: 6vw; 
+    font-weight: bold;
+    position: absolute;
+    top:-15%;
+}
+
+#about-tracker {
+    color: white; 
+    font-family:  Noto Sans, sans-serif; 
+    font-size: 1vw; 
+    font-weight: bold;
+    position: absolute; 
+    top:25%;
+}
+
+.login-main-container {
+    position: absolute;
+    top: 15%;
+    left: 70%;
+    width: 25%;
+    height:80%;
+    background: rgb(255, 255, 255, 0.8);
+    border:2px rgb(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.4);
+}
+
+.login-form-text .info-input {
+    font-family: Noto Sans, sans-serif;
+    font-size: 1vw; 
+    font-weight: bold; 
+    position: relative;
+    margin-left:10%;
+    margin-top:20%;
+    text-decoration: none;
+    color: #023a4f;
+}
+
+.info-input input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #023a4f;
+    width: 80%;
+    height: 20px;
+    font-family: Noto Sans, sans-serif;
+    font-size: 15px;
+    color: #023a4f;
+}
+
+#sign-in-button {
+    background-color: #ff6c37;
+    padding: 14px 28px;
+    font-family: Noto Sans, sans-serif;
+    font-size: 1vw; 
+    font-weight: bold; 
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    margin-left: 10%;
+    margin-top: 25%;
+    display: inline-block;
+    border: 1px solid #ff6c37;
+    -moz-border-radius: 2px 
+    -webkit-border-radius: 2px;
+    border-radius: 5px
+}
+
+#sign-in-button:hover {
+    background-color: #fd4f12;
+    border: 1px solid #fd4f12;
+}
+
+#start-page {
+    margin:0px;
+    background-image: url("../pictures/backgrounds/index6.jpg");
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+nav ul li a, nav ul li a:after, nav ul li a:before, 
+.main-text a, .main-text a:after, .main-text a:before, 
+nav, nav:after, nav:before, 
+#sign-in-button, #sign-in-button:after, #sign-in-button:before {
+    transition: all .3s;
+}
+

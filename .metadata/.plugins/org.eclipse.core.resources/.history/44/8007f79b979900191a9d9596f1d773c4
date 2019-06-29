@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Nedap | Tracker</title>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="../css/bootstrap.min.css" />
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+		<link rel="stylesheet" type="text/css" href="../css/google-visualization-controls-theme-plus.css">
+		<link rel="stylesheet" href="../css/style-dashboard.css" />
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script type="text/javascript">
+
+			google.charts.load('current', {'packages': ['corechart']});
+			const monthNames = {"1":"Jan", "2":"Feb", "3":"Mar", "4":"Apr", "5":"May", "6":"Jun",
+ 								 "7":"Jul", "8":"Aug", "9":"Sep", "10":"Oct", "11":"Nov", "12":"Dec"};
+			exeMapping = {};
+			stepMapping = {};
+
+			window.onload = function(){
+				document.getElementById("username").innerHTML = "Welcome, " + sessionStorage.getItem("name");
+				document.getElementById("role").innerHTML = sessionStorage.getItem("role").toUpperCase();
+				document.getElementById("default-tab").click();
+				google.load('visualization', '1', { packages: ['controls'], callback: populateTable });
+			}
+			
+			function populateTable() {
+
+				tableData = new google.visualization.DataTable();
+				tableData.addColumn('string', 'JOB ID');
+				tableData.addColumn('string', 'COMPANY');
+				tableData.addColumn('string', 'KEY');
+				tableData.addColumn('string', 'JOB NAME');
+				tableData.addColumn('string', 'STATUS');
+
+
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						var jobs = JSON.parse(this.responseText);
+						console.log(jobs);
+						tableData.addRows(jobs.length);
+
+						var counter = 0;
+						for (job in jobs) {
+							tableData.setCell(counter, 0, jobs[job].jobInstanceID.toString());
+							tableData.setCell(counter, 1, jobs[job].organizationName);
+							tableData.setCell(counter, 2, jobs[job].jobKey);
+							tableData.setCell(counter, 3, jobs[job].jobName);
+							tableData.setCell(counter, 4, jobs[job].status);
+							exeMapping[jobs[job].jobInstanceID] = jobs[job].links[1].link;  // link to the collection of executions
+							counter += 1;
+						}
+					drawTable();
+					drawAreaChart();
+					drawDonutChart();
+				};
+			}
+			xhr.open("GET","http://localhost:8080/dashboard/rest/v1/organizations/jobs?start=2019-03-24", true);
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("JWT"));
+			xhr.setRequestHeader("Accept", "application/json");
+			xhr.send();
+		}
+
+
+		function populateTimeline(id, co, jk, jn, st) {
+
+				var timeline = document.getElementById("d-job-exec");
+				timeline.innerHTML = "";
+				var xhr = new XMLHttpRequest();	
+				xhr.onload = function () {
+
+					if (this.status == 200) {
+
+						var executions = JSON.parse(this.responseText);
+						for(exe in executions) {
+							
+							var btn = document.createElement("button");
+							btn.className = "detailed-execution shadow";
+							//btn.onclick = populateStepExecutions();
+							var eid = document.createElement("p");
+							eid.className = "excn-id";
+							eid.id = "e-id";
+							eid.innerHTML = "Exec ID:" + executions[exe].jobExecutionID;
+							var etc = document.createElement("p");
+							etc.className = "time-created";
+							etc.innerHTML = executions[exe].createTime;
+							var eec = document.createElement("p");
+							eec.className = "exit-code";
+							eec.innerHTML= executions[exe].exitCode;
+
+							stepMapping[executions[exe].jobExecutionID] = executions[exe].links[2].link;
+							console.log(stepMapping[executions[exe].jobExecutionID]);
+
+							if(executions[exe].exitCode == "FAILED") {
+								eec.id = "failed-execution";
+							} else if(executions[exe].exitCode == "COMPLETED") {
+								eec.id = "completed-execution";
+							}
+
+							btn.appendChild(eid);
+							btn.appendChild(etc);
+							btn.appendChild(eec);
+							timeline.appendChild(btn);
+						}
+						
+					}
+				}
+				xhr.open("GET", exeMapping[id], true);
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("JWT"));
+				xhr.setRequestHeader("Accept", "application/json");
+				xhr.send();
+			}
+
+			function populateStepExecutions(id){
+				//var exeID = parse(id);
+         		 var tbody = document.getElementById('step-execution-body');
+				  tbody.innerHTML= "";
+				  
+				  var xhr = new XMLHttpRequest();
+				  xhr.onload = function() {
+					  var steps = JSON.parse(this.responseText);
+					  for (step in steps) {
+
+						  var tr = document.createElement("tr");
+				 		  tr.onclick = showStepExInfo($(this).find('#se-id').text());
+						  var stepID = document.createElement("td");
+						  stepID.innerHTML = steps[step].stepExecutionID;
+						  var stepName = document.createElement("td");
+						  stepName.innerHTML = steps[step].stepName;
+						  var started = document.createElement("td");
+						  started.innerHTML = steps[step].startTime;
+						  var ended = document.createElement("td");
+						  ended.innerHTML = steps[step].endTime;
+						  var status = document.createElement("td");
+						  status.innerHTML = steps[step].status;
+
+						 tr.appendChild(stepID);
+						 tr.appendChild(stepName);
+						 tr.appendChild(started);
+						 tr.appendChild(ended);
+						 tr.appendChild(status);
+						 tbody.appendChild(tr);
+					  }
+				  }
+
+				xhr.open("GET", stepMapping[exeID], true);
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("JWT"));
+				xhr.setRequestHeader("Accept", "application/json");
+				xhr.send();
+			  }
+			  
+
+			function showStepExInfo(sid){
+          	//Change inner html of the detailed-step-exec-info tab to the setails of an execution based on the sid (step(execution) id).
+          	//Specific identifier of the step execution is taken from the first column of the table.
+          	alert(sid);
+        	}
+
+  			function drawTable() {
+
+					var columns = [{
+					type: 'string',
+					calc: function(dt, row) {
+						for (var i = 0, vals = [], cols = dt.getNumberOfColumns(); i < cols; i++) {
+							vals.push(dt.getFormattedValue(row, i));
+						}
+						return vals.join('\n');
+					}
+				}];
+				for (var i = 0, cols = tableData.getNumberOfColumns(); i < cols; i++) {
+					columns.push(i);
+				}
+
+				var search = new google.visualization.ControlWrapper({
+					controlType: 'StringFilter',
+					containerId: 'search',
+					options: {
+						filterColumnIndex: 0,
+						matchType: 'any',
+						caseSensitive: false,
+						allowHtml: true,
+					},
+					view: {
+						columns: columns
+					}
+				});
+
+				var filter = new google.visualization.ControlWrapper({
+					controlType: 'CategoryFilter',
+					containerId: 'filter',
+					allowHtml: true,
+					options: {
+						filterColumnLabel: 'STATUS',
+						ui: {
+							caption: 'ALL JOBS',
+							label: '',
+							allowTyping: false,
+							allowMultiple: false,
+							cssClass: 'filterbar'
+						}
+					}
+				})
+
+				var tablecss = {
+					'headerRow': 'dark-header font-format',
+					'tableRow': 'white-row',
+					'oddTableRow': 'white-row',
+					'selectedTableRow': '',
+					'hoverTableRow': 'gray-row',
+					'headerCell': '',
+					'tableCell': 'left-text font-format bottom-border-only',
+					'rowNumberCell': ''
+				};
+
+				var table = new google.visualization.ChartWrapper({
+					chartType: 'Table',
+					containerId: 'table',
+					options: {
+						showRowNumber: false,
+						width: '100%',
+						height: '100%',
+						allowHtml: true,
+						cssClassNames: tablecss,
+						page: 'enable',
+						pageSize: 25,
+						pagingSymbols: {
+							prev: 'prev',
+							next: 'next'
+						}
+					},
+					view: {
+						columns: [0, 1, 2, 3, 4]
+					}
+				});
+				
+				
+
+				var dashboard = new google.visualization.Dashboard(document.getElementById('home-tab'));
+				dashboard.bind([search, filter], table);
+				dashboard.draw(tableData);
+
+				google.visualization.events.addListener(table, 'select', function() {
+					var selection = table.getChart().getSelection();
+					var row = selection[0].row;
+					
+					var jobId = table.getDataTable().getValue(row, 0);	 
+					var company = table.getDataTable().getValue(row,1);
+					var key = table.getDataTable().getValue(row,2);
+					var jobName = table.getDataTable().getValue(row,3);
+					var status = table.getDataTable().getValue(row, 4);
+					populateTimeline(jobId, company, key, jobName, status);
+					openTab(event, 'detailed-tab');
+				});
+			}
+
+			function drawAreaChart() {
+
+				var linedata = new google.visualization.DataTable();
+				linedata.addColumn('string', 'Month');
+				linedata.addColumn('number', 'Completed');
+				linedata.addColumn('number', 'Failed');
+				linedata.addColumn('number', 'Stopped');
+				linedata.addColumn('number', 'Unknown');
+
+				var xhr = new XMLHttpRequest();
+				var year;
+				xhr.onload = function () {
+					if(this.status == 200) {
+						var data = JSON.parse(this.responseText);
+						var year;
+						for (dataPoint in data) {
+							var object = data[dataPoint];
+							year = object.start;
+							linedata.addRows([[monthNames[dataPoint], object.completed, object.failed, object.stopped, object.unknown]]);
+						}
+						var options = {
+								title: '# of status\'s relative to the total amount of jobs in ' + year,
+								hAxis: {title: 'Month',  titleTextStyle: {color: '#333'}},
+								colors: ['#2c87bb', '#302b63', '#f2ff02', '#ff0101'], 
+								vAxis: {minValue: 0, title:'# of status\'s relative to total amount of jobs'},
+								width: 1200,
+								height: 700,
+								animation: {
+									startup: true
+								}
+							};
+							getNumbersForOverview();
+							var chart = new google.visualization.AreaChart(document.getElementById('line-graph'));
+							chart.draw(linedata, options);
+					}
+				}
+				xhr.open("GET", "http://localhost:8080/dashboard/rest/v1/statistics/all-jobs/years/" + new Date().getFullYear().toString(), true);
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("JWT"));
+				xhr.setRequestHeader("Accept", "application/json");
+				xhr.send();
+			}
+
+
+			function getNumbersForOverview() {
+
+				var xhr = new XMLHttpRequest();
+				xhr.onload = function() {
+
+					if (this.status == 200) {
+						var counts = JSON.parse(this.responseText);
+						for (count in counts) {
+							formatNumber('successful-job-number', counts[count].completed);
+              				formatNumber('failed-job-number', counts[count].failed);
+						}
+
+						var totalRequest = new XMLHttpRequest();
+						totalRequest.onload = function() {
+							var totalCount = JSON.parse(this.responseText);
+							formatNumber('all-job-number', totalCount.count);
+						}
+						totalRequest.open("GET", "http://localhost:8080/dashboard/rest/v1/statistics/all-jobs/count", true);
+						totalRequest.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("JWT"));
+						totalRequest.setRequestHeader("Accept", "application/json");
+						totalRequest.send();
+					}
+				}
+				var lastMonth = (new Date().getMonth()) - 1; // in js months are from 0-11, this has to be dealt with differenly but is kept like that for now (to get month 4)
+				xhr.open("GET", "http://localhost:8080/dashboard/rest/v1/statistics/all-jobs/years/2019/months/" + lastMonth.toString(), true);
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("JWT"));
+				xhr.setRequestHeader("Accept", "application/json");
+				xhr.send();
+			}
+
+
+			function drawDonutChart() {
+
+				var s = tableData.getFilteredRows([{column: 4, value: 'COMPLETED'}]).length;
+				var f = tableData.getFilteredRows([{column: 4, value: 'FAILED'}]).length;
+				formatNumber('ongoing-job-number', tableData.getFilteredRows([{column: 4, value: 'STARTED'}]).length);
+
+				var donutdata = google.visualization.arrayToDataTable([
+					['Status', 'Number of Jobs'],
+					['Completed', s],
+					['Failed', f]
+					]);
+
+				var options = {
+					title: 'Break Up of Total Jobs',
+					pieHole: 0.4,
+					colors: ['#2c87bb', '#302b63'],
+					width: 400,
+                	height: 400,
+					legend: {position: 'bottom', textStyle: {color: 'blue', fontSize: 16}}
+				};
+				var chart = new google.visualization.PieChart(document.getElementById('donut-chart'));
+				chart.draw(donutdata, options);
+			}
+
+			function openTab(evt, tabName) {
+			    var i, tabcontent, tablinks;
+			    tabcontent = document.getElementsByClassName("tabcontent");
+			    for (i = 0; i < tabcontent.length; i++) {
+			    	tabcontent[i].style.display = "none";
+			    }
+			    tablinks = document.getElementsByClassName("tablinks btn-block");
+			    for (i = 0; i < tablinks.length; i++) {
+			        tablinks[i].className = tablinks[i].className.replace(" active", "");
+			    }
+			    document.getElementById(tabName).style.display = "block";
+			    evt.currentTarget.className += " active";
+			}
+
+			function copyText() {
+  				var copyText = document.getElementById("job-info-area");
+  				copyText.select();
+  				document.execCommand("copy");
+  			}
+		  
+		function formatNumber(id, num){
+          var n = num.toString();
+          var text;
+          if(num >=1000 && num<1000000){
+            text = n.substring(0, n.length-3) + "K";
+          } else if (num >=1000000 && num<1000000000){
+            text = n.substring(0, n.length-5);
+            text = text.substring(0,text.length-1) + '.' + text.charAt(text.length-1) + 'M';
+          } else if (num >=1000000000 && num<1000000000000){
+            text = n.substring(0, n.length-8);
+            text = text.substring(0,text.length-1) + '.' + text.charAt(text.length-1) + 'B';
+          } else {
+            text=n;
+          }
+          document.getElementById(id).textContent = text;
+        }
+
+
+			function logout() {
+				sessionStorage.clear();
+				window.location.href = "http://localhost:8080/dashboard/";
+			}
+			
+			
+		</script>
+	</head>
+	<body>
+		<header class="page-header">
+			<a href="#">
+				<i class="fas fa-code code-icon"></i>
+			</a>
+			<a href="https://nedap.com/" target="_blank">
+				<img  class="nav-logo" src="../pictures/logos/nlgw.png" style="position:absolute; width:160px; height:auto; left: 0; right: 0; top:0; bottom:0; vertical-align: middle; margin:auto;">
+			</a>
+			<div class="user-details" style="color: white;">
+				<i class="fas fa-user" style="font-size: 2vw; position: absolute; top:15%; bottom:30%; vertical-align: middle; margin:auto;"></i>
+				<h5 style="font-size: 1vw; position: absolute; top:10%; left: 20%;" id="username"></h5>
+				<h6 style="font-size: 0.7vw; position: absolute; top:50%; left: 20%;" id="role"></h6>
+			</div>
+		</header>
+		<main class="page-main">
+			<div class="sidebar" id="sidebar">
+				<nav class="sidebar-nav">
+					<div class="nav">
+						<button class="tablinks btn-block" onclick="openTab(event, 'home-tab')" id="default-tab">
+							<i class="fas fa-database"></i> &nbsp;&nbsp; Home
+							<i class="fas fa-arrow-right" id="arrow-appear"></i>
+						</button>
+						<button class="tablinks btn-block" onclick="openTab(event, 'graph-tab')">
+							<i class="fas fa-chart-pie" aria-hidden="true"></i> &nbsp;&nbsp; Graphs
+							<i class="fas fa-arrow-right" id="arrow-appear"></i>
+						</button>
+						<button class="tablinks btn-block" onclick="openTab(event, 'faq-tab')">
+							<i class="fas fa-question" aria-hidden="true"></i> &nbsp;&nbsp; Help
+							<i class="fas fa-arrow-right" id="arrow-appear"></i>
+						</button>
+						<button class="nav-link btn-block logout-button" onclick="logout()>
+							<i class="fas fa-sign-out-alt" ></i> &nbsp;&nbsp; LOG OUT
+						</button>
+						<a class="nav-link btn-block contact-button" href="https://nedap.com/investors/contact/" target="_blank">
+							<i class="fas fa-mobile-alt" aria-hidden="true"></i> &nbsp;&nbsp; Contact Us
+						</a>
+					</div>
+				</nav>
+			</div>
+			<div class="content">
+				<div class="home-tab tabcontent google-visualization-controls-theme-plus" id="home-tab">
+					<div class="filters shadow">
+						<div id="search"></div>
+						<div id="filter"></div>
+					</div>
+					<div class="table shadow" id="table"></div>
+				</div>
+				<div class="detailed-tab tabcontent" id="detailed-tab">
+					<div class="detailed-job-exec" id=d-job-exec>
+					</div>
+					<div class="detailed-step-exec shadow">
+						<table id="step-exec-table">
+							<thead>
+							  <tr>
+								<th>Step ID</th>
+								<th>Step Name</th>
+								<th>Started</th>
+								<th>Ended</th>
+								<th>Status</th>
+							  </tr>
+							</thead>
+							<tbody id="step-execution-body">
+							  <tr onclick="showStepExInfo($(this).find('#se-id').text())">
+								<td id="se-id">Data</td>
+								<td>Data</td>
+								<td>Data</td>
+								<td>Data</td>
+								<td>Data</td>
+								<td>Data</td>
+							  </tr>
+							</tbody>
+						  </table>
+					</div>
+					<div class="detailed-step-exec-info shadow"></div>
+				</div>
+				<div class="graph-tab tabcontent" id="graph-tab">
+					<div class="all-job-count shadow" style="color: #302b63;">
+						<h6> <i class="fas fa-crosshairs"></i> All Jobs</h6>
+						<div class="all-job-number counts" id="all-job-number"></div>
+					</div>
+					<div class="successful-job-count shadow" style="color: green;">
+						<h6> <i class="fas fa-check"></i> Successful Jobs Last Month</h6>
+						<div class="successful-job-number counts" id="successful-job-number"></div>
+					</div>
+					<div class="failed-job-count shadow" style="color: red;">
+						<h6> <i class="fas fa-times"></i> Failed Jobs Last Month</h6>
+						<div class="failed-job-number counts" id="failed-job-number"></div>
+					</div>
+					<div class="ongoing-job-count shadow" style="color: #302b63;">
+						<h6> <i class="fas fa-clock"></i> Ongoing Jobs</h6>
+						<div class="ongoing-job-number counts" id="ongoing-job-number"></div>
+					</div>
+					<div class="line-chart shadow" id="line-chart">
+						<h6 style="color: #302b63;"> <i class="far fa-clock"></i></h6>
+						<div id="line-graph"></div>
+					</div>
+					<div class="pie-chart shadow" id="pie-chart">
+						<h6 style="color: #302b63;"> <i class="fas fa-percentage"></i> Distribution of Jobs</h6>
+						<div id="donut-chart" style="position: absolute; left: 8%;"></div>
+					</div>
+				</div>
+				<div class="faq-tab tabcontent" id="faq-tab">
+<section class="accordion-section clearfix mt-3" aria-label="Question Accordions">
+					<div class="container" align="center">
+				  <h2 style="color:#023a4f;"> Frequently Asked Questions</h2>
+				  	<p></p>
+					  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" >
+						  <div class="panel panel-default">
+							  <div class="panel-heading p-3 mb-3" role="tab" id="heading0">
+								  <h3 class="panel-title">
+									  <a class="collapsed" role="button" title="" data-toggle="collapse" data-parent="#accordion" href="#collapse0" aria-expanded="true" aria-controls="collapse0">
+									  How can i view more in depth details about the job execution?
+									  </a>
+								  </h3>
+							  </div>
+								  <div id="collapse0" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
+									  <div class="panel-body px-3 mb-4">
+										  <p>By clicking on a job of your interest, a modal will be displayed from where you can access a timeline with the step executions and parameters. An exit code can also be viewed which shows error arose in case of a failed execution</p>
+									  </div>
+								  </div>
+						  </div>
+						  
+						  <div class="panel panel-default">
+							  <div class="panel-heading p-3 mb-3" role="tab" id="heading0">
+								  <h3 class="panel-title">
+									  <a class="collapsed" role="button" title="" data-toggle="collapse" data-parent="#accordion" href="#collapse1" aria-expanded="true" aria-controls="collapse1">
+									  What filters am I able to search by?
+									  </a>
+								  </h3>
+							  </div>
+								  <div id="collapse1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
+									  <div class="panel-body px-3 mb-4">
+										  <p>The Nedap Job Tracker provides your organization with multiple filters to allow easy tracking of your jobs.The filters which are avaliable to use are Order By:
+										  	<ul>
+										  	<li>Organization Name </li>
+										  	<li> Key </li>
+										  	<li> Status of completion </li>
+										  	A search bar is also in place, allowing user input to directly access certain attributes
+										  </p>
+									  </div>
+								  </div>
+						  </div>
+
+
+						  <div class="panel panel-default">
+							  <div class="panel-heading p-3 mb-3" role="tab" id="heading0">
+								  <h3 class="panel-title">
+									  <a class="collapsed" role="button" title="" data-toggle="collapse" data-parent="#accordion" href="#collapse2" aria-expanded="true" aria-controls="collapse2">
+									  How long will it take for my restart request to be processed?
+									  </a>
+								  </h3>
+							  </div>
+								  <div id="collapse2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
+									  <div class="panel-body px-3 mb-4">
+										  <p>A restart request is attended to as soon as possible. Depending on the need and priority, a request can be procssed with 3-5 business days</p>
+									  </div>
+								  </div>
+						  </div>
+
+
+						  <div class="panel panel-default">
+							  <div class="panel-heading p-3 mb-3" role="tab" id="heading0">
+								  <h3 class="panel-title">
+									  <a class="collapsed" role="button" title="" data-toggle="collapse" data-parent="#accordion" href="#collapse3" aria-expanded="true" aria-controls="collapse3">
+									  I do not see a question I have on the FAQ
+									  </a>
+								  </h3>
+							  </div>
+								  <div id="collapse3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
+									  <div class="panel-body px-3 mb-4">
+										  <p> If you have any questions or concerns then please do not hesitate to contact us. We will try to respond to you as soon as we possibly can</p>
+									  </div>
+								  </div>
+						  </div>
+					  </div>
+				  </section>
+				</div>
+			</div>
+		</main>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="../js/bootstrap.min.js"></script>
+	</body>
+</html>

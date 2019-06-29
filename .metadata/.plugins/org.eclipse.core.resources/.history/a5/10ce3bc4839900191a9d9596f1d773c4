@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This web.xml file is not required when using Servlet 3.0 container, 
+	see implementation details http://jersey.java.net/nonav/documentation/latest/jax-rs.html -->
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+
+	<servlet>
+		<servlet-name>Token Issuer</servlet-name>
+		<servlet-class>utwente.nedap.team23.nedapDashboard.security.TokenServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>utwente.nedap.team23.nedapDashboard</param-value>
+		</init-param>
+		<init-param>
+			<param-name>javax.ws.rs.Application</param-name>
+			<param-value>utwente.nedap.team23.nedapDashboard.model.Configuration</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+
+	<servlet-mapping>
+		<servlet-name>Jersey Web Application</servlet-name>
+		<url-pattern>/rest/v1/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>Token Issuer</servlet-name>
+		<url-pattern>/v1/oauth/token</url-pattern>
+	</servlet-mapping>
+
+<!-- 	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Token Request Permission</web-resource-name>
+			<url-pattern>/oauth/token</url-pattern>
+			<http-method>GET</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>SUPPORT</role-name>
+			<role-name>TECHNICIAN</role-name>
+			<role-name>T</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>Token Request Permission</realm-name>
+	</login-config> -->
+	
+ 	<error-page>
+		<error-code>404</error-code>
+		<location>/error-pages/404Error.html</location>
+	</error-page> 
+	
+ 	<error-page>
+		<error-code>500</error-code>
+		<location>/error-pages/500Error.html</location>
+	</error-page>
+
+	<welcome-file-list>
+		<welcome-file>login/index.html</welcome-file>
+	</welcome-file-list>
+</web-app>
