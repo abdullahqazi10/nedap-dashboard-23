@@ -19,6 +19,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import utwente.nedap.team23.nedapDashboard.model.Account;
+import utwente.nedap.team23.nedapDashboard.model.Customer;
+import utwente.nedap.team23.nedapDashboard.model.Person;
 
 
 
@@ -109,6 +111,7 @@ public class AuthenticationTokenService {
 				.withSub(Long.toString(acc.getOwner().getPersonID()))
 				.withUsername(acc.getOwner().toString())
 				.withIssuer("Nedap")
+				.withOrganization(getOrganization(acc.getOwner()))
 				.withRole(acc.getRole())
 				.withIssuedDate(issuedAt)
 				.withExpirationDate(expirationDate.getValue())
@@ -147,6 +150,18 @@ public class AuthenticationTokenService {
 		
 		return authenticationTokenDetails;
 		
+	}
+	
+	private String getOrganization(Person per) {
+		
+		String organization;
+		
+		if (per instanceof Customer) {
+			organization = ((Customer) per).getOrganizationID();
+		} else {
+			organization = "Nedap";
+		}
+		return organization;
 	}
 	
 	

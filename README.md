@@ -1,58 +1,60 @@
-# Nedap Dashboard - Team 23
+# Nedap Tracker
+The Nedap Tracker is an intuitive web tool that can be used to view, query and visualise data about the jobs that Nedap accepts.
 
-For now this will serve as an *installation guide* for our project. This should help you to install MySQL, load the data dump to your databse and remove errors that occured while trying to connect to the database server via the JDBC client. 
-Most of the dependencies will be defined inside of the *pom.xml* file of this project. 
-This version of the README only supports an installation guide for *unix* based OS for now, more particularly,
-for the **MAC OS**. This will be extended to *Linux* and *Windows* in the future. 
+## What we are proud of 
+As a group, we are proud of multiple things. A lot of work went towards both the front end and backend with all of us learning a lot about web applications and how they function with databases. Security was an optional requirement but was done with a great deal of enthusiasm as we attempted to replicate what major web applications provided to customers in terms of looking after their confidential information.Basic web authentication was implemented along with the JSON web token. Ultimately, It was important to be rest compliant an adhere to conventions.  Furthermore, the whole experience gave us something to try in our free time as the skills we learnt are applicable in the real world as we access websites on a daily basis but did not fully realize the amount of effort to produce what can be described as a work of art. All in all, we hope the work done in the project is only the beginning of what's to follow in our career as web developers.
 
-## Installation 
+## Login
+The login page can be accessed via localhost:8080/dashboard. The credentials needed to access the specific pages are given below:
 
-### Mac Os
+|     Role   |   Username   |  Password |
+|:----------:|:------------:|:----------|
+| Technician |    118824    | password1 |
+|  Customer  |    101010    | password5 |
+|  Customer  |    302178    | password7 |
+|  Support   |    419284    | password2 |
 
-First download and install the MySQL Community Server from https://dev.mysql.com/downloads/mysql/.
-Download the package *macOS 10.14 (x86, 64-bit), DMG Archive* (as to this date). You will be asked to *sign up* or create a new *account*. Simply ignore this, scroll down and click on "*No thanks, just start my download.*" This system is open source and for free. 
-If the package has been downloaded, do the following:
-1. Install the MySQL Community Server Application
-2. Remember the pasword you used during the installation process
-3. Go to *System Preference > MySQL* and click on *Start MySQL Server*
 
-Once you followed the steps open your *Terminal* and do the following.
-```sh
-$ open -e .bash_profile
-```
-If you do not have the file then simply create one by:
-```sh
-$ touch .bash_profile
-$ open -e .bash_profile
-```
-After that copy and paste **export PATH=${PATH}:/usr/local/mysql/bin/** into the *.bash_profile*, save it and open a new window of *Terminal*.
-For the next steps make sure that you MySQL Server is running. Now in order to connect to your database you need your password that you used for your database during the installation process. In the following we will also set the server *time_zone* values correctly since JDBC will complain about not recognizing them.
-```sh
-$ mysql -u root -p
-```
-Type in your password and type these statements: 
-```sh
-mysql> SET @@global.time_zone = '+00:00';
-mysql> SET @@global.time_zone = '+00:00';
-```
-To check whether altered successfully: 
-```sh
-mysql> SELECT @@global.time_zone, @@session.time_zone;
-```
-After everything has been set up, we can now load the data dump file to the database.
-First quit the MySQL Server application by typing in *quit*:
-```sh
-mysql> quit
-```
-Now in order to load the dump file to your database, you first go to the directory where the *NedapDump.mysql* file is saved. Then simply run the following command:
-```sh
-$ mysql -u root -p NedapDump < NedapDump.mysql 
-```
-In order to check whether it worked:
-```sh
-mysql> show databases; 
-```
-It should show you :
-![screen](nedapDashboard/src/main/webapp/pictures/readme/readme_screen1.png)
-Now  everything should work properly and the project can be run and tested out. 
-Information on how to navigate through MySQL with the Terminal visit https://dev.mysql.com/doc/refman/8.0/en/.
+Attempting to use an invalid username or password will deny access to either of those pages and display an error message, showing that the wrong credentials have been entered.
+
+## Usage
+The sidebar on the lefthand side of the page can be used to switch between the tabs described below. When the page is loaded, the Home Tab is loaded by default. The sidebar can also be used to log out. When the log out button is clicked, the page is redirected to the login page and the session storage of the browser is cleared. When the contact button is clicked, a new tab is opened and is directed to the official Nedap contact page.
+
+### Home Tab
+The Home Tab is displayed on default when the page reloads. This page is occupied primarily by the data table. The data table consists of all the jobs Nedap accepts. When a particular job in the table is clicked, the information tab is displayed with the information about the selected job. The table has functions to search, filter and sort through data. These functions are described below:
+
+* Searching
+  
+  The search bar located above the table can be used to query the jobs in the table. The search bar can search through all the columns in the table.
+
+* Filtering
+
+  To the right of the search bar is the dropdown menu that can be used to filter the data to show all jobs, completed jobs or failed jobs.
+
+* Sorting
+ 
+  The data in the table can also be sorted by clicking the column headers which cause the data to be sorted (by ascending or descending order of the column selected).
+
+The above functions can be used in tandem to query very accurately the required results.
+
+### Information Tab
+The information tab contains information about the chosen job. Along the top of the section are the executions of a job. When a particular execution is selected, a table in the bottom left is populated to display the step executions as well as a table on the bottom right displaying information about the parameters used. These step executions can also be clicked to display further information about a particular step.
+
+### Infographics Tab
+The infographics tab visualises the data from the table.
+
+Along the top of the page are counts which show all jobs, successful jobs for the previous month, failed jobs for the previous month as well as ongoing jobs.
+
+At the bottom left is a line graph which visualises the number of jobs by month in the current year which fall into different categories. 
+
+The bottom right contains a pie chart which shows the percentages of successful and failed jobs.
+
+Disclaimer: Currently a customer does not see any infographics but will be included in the final version during the final presentation.
+
+For an employee of Nedap who may have the role of technician or customer support, this section displays data from all companies. For a customer of Nedap, this section displays only data from the jobs they have with Nedap.
+
+### FAQ Tab
+The Frequently Asked Questions tab contains a set of questions the users of the dashboard may have. When a question is clicked, a dropdown answer is displayed pertaining to the question clicked.
+
+## Miscellaneous
+Database transactions were not used in this project as in the scope of the project, our service only contains read operations meaning no such errors such as dirty read, phantom etc can occur. However, If the system is in use, write operations will be used which means that the dirty read error, repeatable read and phantom can occur. In order to solve it, the system can be made serializable.

@@ -355,3 +355,28 @@ Caused by: org.eclipse.core.runtime.CoreException: Cannot create or restore 'fon
 
 !ENTRY org.eclipse.jst.server.core 4 0 2019-06-29 02:37:11.816
 !MESSAGE Could not launch in profiling mode because no profilers are configured.
+!SESSION 2019-06-29 16:41:17.949 -----------------------------------------------
+eclipse.buildId=4.11.0.I20190307-0500
+java.version=1.8.0_192
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_NL
+Framework arguments:  -product org.eclipse.epp.package.jee.product -keyring /Users/julian./.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.jee.product -keyring /Users/julian./.eclipse_keyring
+
+!ENTRY org.eclipse.core.net 1 0 2019-06-29 16:41:19.139
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16 by an external source. This value will be overwritten using the values from the preferences
+
+!ENTRY org.eclipse.core.resources 2 10035 2019-06-29 16:41:44.602
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY org.eclipse.egit.core 1 0 2019-06-29 16:41:46.494
+!MESSAGE Using Apache MINA sshd as ssh client.
+
+!ENTRY org.eclipse.jface.text 2 0 2019-06-29 16:41:48.794
+!MESSAGE Duplicate template id: 'org.eclipse.wst.xslt.templates.xpath.boolean'
+
+!ENTRY org.eclipse.jface.text 2 0 2019-06-29 19:07:41.808
+!MESSAGE Duplicate template id: 'org.eclipse.wst.xslt.templates.xpath.boolean'
+
+!ENTRY org.eclipse.jst.server.core 4 0 2019-06-29 19:18:46.554
+!MESSAGE Could not launch in profiling mode because no profilers are configured.

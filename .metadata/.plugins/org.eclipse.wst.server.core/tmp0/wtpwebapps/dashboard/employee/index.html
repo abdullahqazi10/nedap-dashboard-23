@@ -14,9 +14,10 @@
 
 			google.charts.load('current', {'packages': ['corechart']});
 			const monthNames = {"1":"Jan", "2":"Feb", "3":"Mar", "4":"Apr", "5":"May", "6":"Jun",
- 								 "7":"Jul", "8":"Aug", "9":"Sep", "10":"Oct", "11":"Nov", "12":"Dec"};
+ 								 "7":"Jul", "8":"Aug", "9":"Sep", "10":"Oct", "11":"Nov", "12":"Dec"}; 
 			exeMapping = {};
 			stepMapping = {};
+			paramsMapping = {};
 
 			window.onload = function(){
 				document.getElementById("username").innerHTML = "Welcome, " + sessionStorage.getItem("name");
@@ -74,35 +75,45 @@
 					if (this.status == 200) {
 
 						var executions = JSON.parse(this.responseText);
-						for(exe in executions) {
-							
-							var btn = document.createElement("button");
-							btn.className = "detailed-execution shadow";
-							btn.value = executions[exe].jobExecutionID;
-							btn.onclick = populateStepExecutions($(this).val());
-							var eid = document.createElement("p");
-							eid.className = "excn-id";
-							eid.innerHTML = "Exec ID:" + executions[exe].jobExecutionID;
-							var etc = document.createElement("p");
-							etc.className = "time-created";
-							etc.innerHTML = executions[exe].createTime;
-							var eec = document.createElement("p");
-							eec.className = "exit-code";
-							eec.innerHTML= executions[exe].exitCode;
+						for(exe in executions) {	
+							(function(){
+								var id = executions[exe].jobExecutionID;
+								var cTime = executions[exe].createTime;
+								var eCode = executions[exe].exitCode;
 
-							stepMapping[executions[exe].jobExecutionID] = executions[exe].links[2].link;
-							console.log(stepMapping[executions[exe].jobExecutionID]);
+								var btn = document.createElement("button");
+								btn.className="detailed-execution shadow";
+								var eid = document.createElement("span");
+								eid.id="eid";
+								eid.style.display="block";
+								eid.innerHTML = "Exec ID:" + id;
+								btn.onclick = function() {populateStepExecutions(id)};
 
-							if(executions[exe].exitCode == "FAILED") {
-								eec.id = "failed-execution";
-							} else if(executions[exe].exitCode == "COMPLETED") {
-								eec.id = "completed-execution";
-							}
+								var etc = document.createElement("span");					
+								etc.style.display="block";
+								etc.style.paddingTop='5%';
+								etc.style.paddingBottom='5%';
+								etc.textContent = cTime;
 
-							btn.appendChild(eid);
-							btn.appendChild(etc);
-							btn.appendChild(eec);
-							timeline.appendChild(btn);
+								var eec = document.createElement("span");
+								eec.style.display="block";
+								eec.textContent = eCode;
+
+								stepMapping[executions[exe].jobExecutionID] = executions[exe].links[2].link;
+								paramsMapping[executions[exe].jobExecutionID] = executions[exe].links[1].link;
+								console.log(paramsMapping[executions[exe].links[1].link]);
+
+								if(executions[exe].exitCode == "FAILED") {
+									eec.id = "failed-execution";
+								} else if(executions[exe].exitCode == "COMPLETED") {
+									eec.id = "completed-execution";
+								}
+
+								btn.appendChild(eid);
+								btn.appendChild(etc);
+								btn.appendChild(eec);
+								timeline.appendChild(btn);
+							})();
 						}
 						
 					}
@@ -113,23 +124,21 @@
 				xhr.send();
 			}
 
-			$("button").click(function() {
-    			var fired_button = $(this).val();
-    			alert(fired_button);
-			});
-
-			function populateStepExecutions(id) {
-
+			function populateStepExecutions(exeID) {
+	
          		 var tbody = document.getElementById('step-execution-body');
 				  tbody.innerHTML= "";
-				  
+				  console.log(exeID);
 				  var xhr = new XMLHttpRequest();
 				  xhr.onload = function() {
 					  var steps = JSON.parse(this.responseText);
 					  for (step in steps) {
 
+						  var context = steps[step].context.shortContext;
+
+						(function() {
 						  var tr = document.createElement("tr");
-				 		  tr.onclick = showStepExInfo($(this).find('#se-id').text());
+				 		  tr.onclick = function() {showStepExInfo(context)};
 						  var stepID = document.createElement("td");
 						  stepID.innerHTML = steps[step].stepExecutionID;
 						  var stepName = document.createElement("td");
@@ -147,10 +156,51 @@
 						 tr.appendChild(ended);
 						 tr.appendChild(status);
 						 tbody.appendChild(tr);
+						})();
+					  }
+					  populateExecutionParams(exeID);
+				  }
+	  
+				xhr.open("GET", stepMapping[exeID], true);
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("JWT"));
+				xhr.setRequestHeader("Accept", "application/json");
+				xhr.send();
+			  }
+
+			  function populateExecutionParams(exeID) {
+
+				var tbody = document.getElementById("execution-params-info-body");
+				tbody.innerHTML= "";
+
+				var xhr = new XMLHttpRequest();
+				  xhr.onload = function() {
+					  var params = JSON.parse(this.responseText);
+					  for (param in params) {
+
+						(function() {
+						  var tr = document.createElement("tr");
+						  var exeID = document.createElement("td");
+						  exeID.innerHTML = params[param].jobExecutionID
+						  var typeCD = document.createElement("td");
+						  typeCD.innerHTML = params[param].typeCD;
+						  var keyName = document.createElement("td");
+						  keyName.innerHTML = params[param].keyName;
+						  var stringVal = document.createElement("td");
+						  stringVal.innerHTML = params[param].stringVal;
+						  var identifying = document.createElement("td");
+						  identifying.innerHTML = params[param].identifying;
+
+						 tr.appendChild(exeID);
+						 tr.appendChild(typeCD);
+						 tr.appendChild(keyName);
+						 tr.appendChild(stringVal);
+						 tr.appendChild(identifying);
+						 tbody.appendChild(tr);
+						})();
 					  }
 				  }
-
-				xhr.open("GET", stepMapping[id], true);
+	  
+				xhr.open("GET", paramsMapping[exeID], true);
 				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("JWT"));
 				xhr.setRequestHeader("Accept", "application/json");
 				xhr.send();
@@ -158,8 +208,9 @@
 			  
 
 			function showStepExInfo(sid){
-          	//Change inner html of the detailed-step-exec-info tab to the setails of an execution based on the sid (step(execution) id).
-          	//Specific identifier of the step execution is taken from the first column of the table.
+			// For now just an alert will later be changed to a modal such that 
+			// also the filtercounts etc. can be displayed in a nice manner
+			// that had no space inside the table	
           	alert(sid);
         	}
 
@@ -240,8 +291,7 @@
 					}
 				});
 				
-				
-
+		
 				var dashboard = new google.visualization.Dashboard(document.getElementById('home-tab'));
 				dashboard.bind([search, filter], table);
 				dashboard.draw(tableData);
@@ -257,6 +307,7 @@
 					var status = table.getDataTable().getValue(row, 4);
 					populateTimeline(jobId, company, key, jobName, status);
 					openTab(event, 'detailed-tab');
+					document.getElementsByClassName("detailed-job-exec")[0].click();
 				});
 			}
 
@@ -400,8 +451,6 @@
 				sessionStorage.clear();
 				window.location.href = "http://localhost:8080/dashboard/";
 			}
-			
-			
 		</script>
 	</head>
 	<body>
@@ -456,29 +505,36 @@
 					</div>
 					<div class="detailed-step-exec shadow">
 						<table id="step-exec-table">
-							<thead>
+						  <thead>
 							  <tr>
-								<th>Step ID</th>
-								<th>Step Name</th>
-								<th>Started</th>
-								<th>Ended</th>
-								<th>Status</th>
-							  </tr>
-							</thead>
-							<tbody id="step-execution-body">
-							  <tr onclick="showStepExInfo($(this).find('#se-id').text())">
-								<td id="se-id">Data</td>
-								<td>Data</td>
-								<td>Data</td>
-								<td>Data</td>
-								<td>Data</td>
-								<td>Data</td>
-							  </tr>
-							</tbody>
-						  </table>
-					</div>
-					<div class="detailed-step-exec-info shadow"></div>
-				</div>
+								  <th>Step ID</th>
+								  <th>Step Name</th>
+								  <th>Started</th>
+								  <th>Ended</th>
+								  <th>Status</th>
+								</tr>
+						  </thead>
+						  <tbody id="step-execution-body">
+						  </tbody>
+						</table>
+					  </div>
+					  <button class="restart-button shadow" id="restart-button">Restart Job</button>
+					  <div class="detailed-exe-params-info shadow">
+						  <table id="other-table">
+						  <thead>
+							<tr>
+							  <th>Exec ID</th>
+							  <th>Type_CD</th>
+							  <th>Key Name</th>
+							  <th>String Val</th>
+							  <th>Identifying</th>
+							</tr>
+						  </thead>
+						  <tbody id="execution-params-info-body">
+						  </tbody>
+						</table>
+					  </div>
+				  </div>
 				<div class="graph-tab tabcontent" id="graph-tab">
 					<div class="all-job-count shadow" style="color: #302b63;">
 						<h6> <i class="fas fa-crosshairs"></i> All Jobs</h6>
@@ -583,7 +639,7 @@
 				</div>
 			</div>
 		</main>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script src="../js/bootstrap.min.js"></script>
 	</body>
 </html>

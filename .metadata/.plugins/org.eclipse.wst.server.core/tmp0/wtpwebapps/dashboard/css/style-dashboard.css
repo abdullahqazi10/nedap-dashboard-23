@@ -324,61 +324,84 @@ main{
 	zoom: 1;
 }
 
+.detailed-execution:focus{
+	background: #eee;
+}
+
 .detailed-step-exec{
 	position: absolute;
 	top:25%;
 	left: 3.5%;
-	width: 60%;
-	max-height: 70%;
+	width: 45%;
+	max-height: 60%;
 	border-radius: 5px;
 	background: white;
 	overflow-y: scroll;
 }
 
-#step-exec-table{
+.detailed-exe-params-info{
+	position: absolute;
+	top: 25%;
+	left: 51.5%;
+	width: 45%;
+	max-height: 60%;
+	border-radius: 5px;
+	background: white;
+	overflow-y: scroll;
+}
+
+.restart-button{
+	position: absolute;
+	top: 87.5%;
+	left: 3.5%;
+	width: 45%;
+	height: 7.5%;
+	background: white;
+	color: black;
+	outline: none;
+	border: 1px solid gainsboro;
+	border-radius: 5px;
+	transition: 0.5s;
+}
+
+.restart-button:hover{
+	background: gainsboro;
+	transition: 0.5s;
+}
+
+#step-exec-table, #other-table{
 	width: 100%;
 	
 }
 
-#step-exec-table thead tr{
+#step-exec-table thead tr, #other-table thead tr{
 	line-height: 3;
 	padding-left: 5%;
 	border-radius: 5px 5px 0 0;
 }
 
-#step-exec-table thead tr th{
+#step-exec-table thead tr th, #other-table thead tr th{
 	padding-left: 5%;
 }
 
-#step-exec-table tbody tr{
+#step-exec-table tbody tr, #other-table tbody tr{
 	line-height: 2;
 }
 
-#step-exec-table tbody tr:hover{
+#step-exec-table tbody tr:hover, #other-table tbody tr:hover{
 	cursor: pointer;
 }
 
-#step-exec-table tbody tr td{
+#step-exec-table tbody tr td, #other-table tbody tr td{
 	padding-left: 5%;
 }
 
-#step-exec-table tbody tr:nth-child(odd){
+#step-exec-table tbody tr:nth-child(odd), #other-table tbody tr:nth-child(odd){
 	background: #eee;
 }
 
-.detailed-step-exec-info{
-	position: absolute;
-	top:25%;
-	left: 66%;
-	width: 30.5%;
-	height: 70%;
-	max-height: 70%;
-	border-radius: 5px;
-	background: white;
-}
-
 ::-webkit-scrollbar {
-    height: 3px;
+    height: 15px;
     background: transparent;
 }
 

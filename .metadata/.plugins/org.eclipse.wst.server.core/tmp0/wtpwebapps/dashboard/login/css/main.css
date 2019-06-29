@@ -478,7 +478,7 @@ input.input100 {
   width: 100%;
   height: 50px;
   border-radius: 10px;
-  background: #6675df;
+  background: #023A4F;
 
   font-family: Montserrat-Bold;
   font-size: 12px;
@@ -494,7 +494,7 @@ input.input100 {
 }
 
 .login100-form-btn:hover {
-  background: #333333;
+  background: #FF6C37;
 }
 
 
