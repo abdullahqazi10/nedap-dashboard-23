@@ -115,7 +115,7 @@ public class OrganizationResource {
 	 * @return		a <code>JobResource</code>
 	 */
 	@Path("jobs")
-	@RolesAllowed({"TECHNICIAN", "SUPPORT"})
+	@RolesAllowed({"TECHNICIAN, SUPPORT"})
 	public JobResource delegateToJobsWithPrivilege() { return new JobResource(); }
 	
 	

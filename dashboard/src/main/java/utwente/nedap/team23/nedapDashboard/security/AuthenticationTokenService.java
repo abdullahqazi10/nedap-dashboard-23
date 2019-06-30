@@ -117,7 +117,6 @@ public class AuthenticationTokenService {
 				.withExpirationDate(expirationDate.getValue())
 				.build();
 
-		System.out.println(authenticationTokenDetails.toJson());
 		return authenticationTokenDetails;
 	}
 	

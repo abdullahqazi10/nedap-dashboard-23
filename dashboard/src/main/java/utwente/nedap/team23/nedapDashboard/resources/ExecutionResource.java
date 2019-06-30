@@ -69,7 +69,7 @@ public class ExecutionResource {
 				exe.addLink("contexts", context);
 				exe.addLink("jobInstance", job);
 			}
-
+ 
 			return Response.ok().entity(executions).build();
 		} catch(SQLException e) {
 			e.printStackTrace();

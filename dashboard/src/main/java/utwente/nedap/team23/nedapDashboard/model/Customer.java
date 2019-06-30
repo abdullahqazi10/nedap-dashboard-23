@@ -2,7 +2,6 @@ package utwente.nedap.team23.nedapDashboard.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-//No abstract class Person used anymore because Customer and Staff are disjoint and covering
 @XmlRootElement
 public class Customer extends Person {
 	

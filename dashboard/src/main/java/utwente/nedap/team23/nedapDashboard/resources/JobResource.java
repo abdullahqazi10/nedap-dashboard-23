@@ -12,8 +12,10 @@ import utwente.nedap.team23.nedapDashboard.model.bean.JobBean;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 /**
  * Resource location of jobs.
@@ -27,7 +29,7 @@ import javax.ws.rs.core.Response;
 @RolesAllowed({"TECHNICIAN", "SUPPORT", "CUSTOMER"})
 public class JobResource {
 
-	
+
 	/**
 	 * Returns a list of (all) jobs. 
 	 * Access to this resource is permitted to all roles: 
@@ -43,16 +45,28 @@ public class JobResource {
 	 */
 	@GET
 	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getJobs(@BeanParam JobBean bean) {
+	public Response getJobs(@BeanParam JobBean bean, @Context SecurityContext sc) {
 
 		try {
 			DatabaseDAO dbService = new DatabaseDAO();
 			List<BatchJobInstance> jobs;
 			if (bean.getOrganizationID() != null) {
+
 				jobs = dbService.getJobInstances(bean.getLimit(), bean.getOrganizationID(),
-						bean.getStart(), bean.getEnd());
-			} else { jobs = dbService.getJobInstances(bean.getLimit(), bean.getStart(),
-					bean.getEnd()); }
+						bean.getStart(), bean.getEnd());			
+			} else { 
+				if (!sc.isUserInRole("CUSTOMER")) {
+					jobs = dbService.getJobInstances(bean.getLimit(), bean.getStart(),
+							bean.getEnd()); 
+				} else {
+
+					// Had to implement it - JAX RS has a bug
+					// and doesnt check for role when customer makes a 
+					// request to /organizations/jobs/ because of delegation (I guess)
+					return Response.status(403)
+							.entity("You have no access to this resource!").build();
+				}
+			}
 
 			for (BatchJobInstance job : jobs) {
 				String uri = bean.createSelfLink(job.getJobInstanceID(), job.getOrgID());
@@ -68,8 +82,8 @@ public class JobResource {
 					.entity("Sorry a mistake happened. Try it later again!").build();
 		} 	
 	}
-	
-	
+
+
 	/**
 	 * Returns a specific job with the given job id. 
 	 * Access to this resource is permitted to all roles: 
@@ -97,18 +111,19 @@ public class JobResource {
 				return Response.status(Response.Status.NOT_FOUND)
 						.entity("Resource not Found.").build(); 
 			} 
-			String uri = bean.createSelfLink(job.getJobInstanceID(), job.getOrgID());
+		
+			String uri = bean.createSelfLink(job.getJobInstanceID(), bean.getOrganizationID());
 			job.addLink("self", uri);
 
 			return Response.ok().entity(job).build();
-			
+
 		} catch(SQLException e) {
 			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
 					.entity("Sorry a mistake happened. Try it later again!").build();
 		}
 	}
-		
+
 
 	/**
 	 * Delegates the request to the handler of executions.

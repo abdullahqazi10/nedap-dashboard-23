@@ -1,0 +1,20 @@
+package utwente.nedap.team23.nedapDashboard.testing;
+
+
+import static org.junit.Assert.assertEquals;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import org.junit.Before;
+import org.junit.Test;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+public class SecurityTesting {
+
+	
+	
+	
+	
+	
+}

@@ -1,0 +1,63 @@
+package utwente.nedap.team23.nedapDashboard.testing;
+
+
+import static org.junit.Assert.assertEquals;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+
+import org.glassfish.jersey.internal.util.Base64;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+
+
+public class StatusCodesTesting {
+	
+	private static final String DOMAIN = "http://localhost:8080/";
+	private static final String WRONGCREDENTIALS = Base64.encodeAsString(("118824:wrong".getBytes()));
+	private static final String CORRECTCREDENTIALS = Base64.encodeAsString("118824:password1".getBytes());
+	private Client client;
+	private WebTarget restTarget;
+	private String jwt;		// once we have one its valid for 8 hrs
+	
+	@Before
+	public void setup() {
+		
+		client = ClientBuilder.newClient();
+		restTarget = client.target(DOMAIN + "dashboard/rest/v1/");
+		// get Token
+		Response response = client.target(DOMAIN + "dashboard/v1/oauth/token")
+				.request().header("Authorization", "Basic " + CORRECTCREDENTIALS).get();
+		jwt = response.getHeaderString("Authorization").replace("Bearer ", ""); // without token no access to any of the resources
+	}
+	
+	
+	@Test
+	public void statusCode200Test() {
+		
+		// Some calls to endpoints
+		Response response = restTarget.path("organizations").request(MediaType.APPLICATION_JSON).get();
+		assertEquals(response.getStatus(), 200);
+		
+		response = restTarget.path("organizations/jobs").request(MediaType.APPLICATION_JSON).get();
+		assertEquals(response.getStatus(), 200);
+		
+		response = restTarget.path("organizations/21844/jobs/4898794/executions/4943633/step-executions")
+				.request(MediaType.APPLICATION_JSON).get();
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+
+}

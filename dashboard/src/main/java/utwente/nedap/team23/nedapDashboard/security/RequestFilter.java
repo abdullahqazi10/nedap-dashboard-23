@@ -45,8 +45,7 @@ public class RequestFilter implements ContainerRequestFilter {
 	public void filter(ContainerRequestContext requestContext) throws IOException {	
 
 		String authHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);	
-		System.out.println(authHeader);
-		if (authHeader.substring(0, 6).equals("Bearer")) {
+		if (authHeader != null && authHeader.substring(0, 6).equals("Bearer")) {
 			AuthenticationTokenService tkService = new AuthenticationTokenService();
 			String jwt = authHeader.replace("Bearer ", "");
 			try {

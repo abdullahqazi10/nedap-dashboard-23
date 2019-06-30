@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="SecurityTesting" project="dashboard" tests="3" started="3" failures="0" errors="0" ignored="0">
+  <testsuite name="utwente.nedap.team23.nedapDashboard.testing.SecurityTesting" time="0.45">
+    <testcase name="AccessGranted" classname="utwente.nedap.team23.nedapDashboard.testing.SecurityTesting" time="0.368"/>
+    <testcase name="ForbiddenAccess" classname="utwente.nedap.team23.nedapDashboard.testing.SecurityTesting" time="0.05"/>
+    <testcase name="UnauthorizedAccess" classname="utwente.nedap.team23.nedapDashboard.testing.SecurityTesting" time="0.032"/>
+  </testsuite>
+</testrun>

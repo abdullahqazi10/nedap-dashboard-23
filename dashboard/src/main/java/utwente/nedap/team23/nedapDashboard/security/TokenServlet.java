@@ -21,8 +21,7 @@ public class TokenServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		String authHeader = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
-		System.out.println(authHeader);
-		if (authHeader.substring(0, 5).equals("Basic")) {
+		if (authHeader != null && authHeader.substring(0, 5).equals("Basic")) {
 			BasicAuthentication authenticator = new BasicAuthentication();
 			Long user = authenticator.authenticate(authHeader);
 			if (user != null) {
@@ -48,7 +47,7 @@ public class TokenServlet extends HttpServlet {
 				httpResponse.sendError(403, "Username or password is wrong.");
 				return;
 			}
-		} else if (authHeader.substring(0, 6).equals("Bearer")) {
+		} else if (authHeader != null && authHeader.substring(0, 6).equals("Bearer")) {
 			
 	        RequestDispatcher rd = httpRequest.getRequestDispatcher("Jersey Web Application");  
 	        rd.forward(httpRequest, httpResponse);  

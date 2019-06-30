@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="StatusCodesTesting" project="dashboard" tests="4" started="4" failures="0" errors="0" ignored="0">
+  <testsuite name="utwente.nedap.team23.nedapDashboard.testing.StatusCodesTesting" time="0.512">
+    <testcase name="statusCode200Test" classname="utwente.nedap.team23.nedapDashboard.testing.StatusCodesTesting" time="0.42"/>
+    <testcase name="statusCode204Test" classname="utwente.nedap.team23.nedapDashboard.testing.StatusCodesTesting" time="0.034"/>
+    <testcase name="statusCode401Test" classname="utwente.nedap.team23.nedapDashboard.testing.StatusCodesTesting" time="0.032"/>
+    <testcase name="statusCode403Test" classname="utwente.nedap.team23.nedapDashboard.testing.StatusCodesTesting" time="0.026"/>
+  </testsuite>
+</testrun>

@@ -1,0 +1,44 @@
+package utwente.nedap.team23.nedapDashboard.testing;
+
+
+import static org.junit.Assert.assertEquals;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import org.junit.Before;
+import org.junit.Test;
+import javax.ws.rs.core.Response;
+
+
+
+public class StatusCodesTesting {
+	
+	private static final String DOMAIN = "http://localhost:8080/";
+	private Client client;
+	private String jwt;		// once we have one its valid for 8 hrs
+	
+	@Before
+	public void setup() {
+		
+		client = ClientBuilder.newClient();
+		Response response = client.target(DOMAIN + "v1/oauth/token/").
+		jwt = response.getHeaderString("Bearer"); // without token no access to any of the 
+	}
+	
+	
+	@Test
+	public void statusCode200Test() {
+		
+		//Response response = client.target();
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+
+}

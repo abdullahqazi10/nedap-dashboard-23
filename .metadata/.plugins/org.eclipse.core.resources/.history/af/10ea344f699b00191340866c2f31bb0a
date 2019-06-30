@@ -1,0 +1,26 @@
+package utwente.nedap.team23.nedapDashboard.testing;
+
+import java.util.ArrayList;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.junit.Test;
+
+import utwente.nedap.team23.nedapDashboard.model.Organization;
+
+public class ResourceTesting extends APITesting {
+	
+	@Test
+	public void organizationsTesting() {
+		
+		Response response = restTarget.path("organizations")
+				.request(MediaType.APPLICATION_JSON)
+				.header("Authorization", jwtTechnician).get();
+		ArrayList<Organization> organizations = response.readEntity(ArrayList.class);
+		
+	}
+	
+	
+	
+}

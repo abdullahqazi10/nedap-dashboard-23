@@ -63,7 +63,7 @@ public class ExecutionBean {
 		.path(JobResource.class, "delegateTo")
 		.resolveTemplate("jobInstanceID", instanceID)
 		.path(Long.toString(executionID))
-		.build().toString();
+		.build().toString(); 
 
 		return uri;
 	}

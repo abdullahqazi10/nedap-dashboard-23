@@ -1,0 +1,12 @@
+package utwente.nedap.team23.nedapDashboard.testing;
+
+import org.glassfish.jersey.internal.util.Base64;
+
+public interface APITesting {
+
+	protected static final String DOMAIN = "http://localhost:8080/";
+	protected static final String WRONGCREDENTIALS = Base64.encodeAsString(("118824:wrong".getBytes()));
+	protected static final String TECHNICIAN = Base64.encodeAsString("118824:password1".getBytes());
+	protected static final String CUSTOMER = Base64.encodeAsString("101010:password5".getBytes());
+	
+}

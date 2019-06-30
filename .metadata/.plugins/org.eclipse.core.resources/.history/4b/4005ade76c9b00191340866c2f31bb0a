@@ -1,0 +1,77 @@
+package utwente.nedap.team23.nedapDashboard.testing;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import org.junit.Test;
+
+import utwente.nedap.team23.nedapDashboard.model.BatchJobInstance;
+import utwente.nedap.team23.nedapDashboard.model.Organization;
+
+
+@SuppressWarnings("unchecked")
+public class ResourceTesting extends APITesting {
+	
+	
+	@Test
+	public void organizationsTesting() {
+		
+		WebTarget orgTarget = restTarget.path("organizations");
+		
+		Response response = orgTarget.request(MediaType.APPLICATION_JSON)
+				.header("Authorization", jwtTechnician).get();
+		ArrayList<Organization> organizations = response.readEntity(ArrayList.class);
+		assertEquals(6, organizations.size());  // scope of project just 6
+		
+		response = orgTarget.path("88888").request(MediaType.APPLICATION_JSON)
+				.header("Authorization", jwtTechnician).get();
+		Organization riverIsland = response.readEntity(Organization.class);
+		assertEquals("88888", riverIsland.getOrganizationID());
+	}
+	
+	
+	
+	@Test
+	public void jobsTest() {
+		
+		WebTarget jobTarget = restTarget.path("organizations/jobs?start=2019-03-24");
+		
+		Response response = jobTarget.request(MediaType.APPLICATION_JSON)
+				.header("Authorization", jwtTechnician).get();
+		System.out.println(response);
+		ArrayList<BatchJobInstance> jobs = response.readEntity(ArrayList.class);
+		System.out.println(jobs.size());
+		assertEquals(6, jobs.size());
+		
+	}
+	
+	
+	
+	@Test
+	public void executionsTest() {
+		
+		WebTarget orgTarget = restTarget.path("organizations");
+		
+	}
+	
+	
+	@Test
+	public void hateoasTest() {
+		
+		WebTarget orgTarget = restTarget.path("organizations/jobs?start=2019-03-24");
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+}

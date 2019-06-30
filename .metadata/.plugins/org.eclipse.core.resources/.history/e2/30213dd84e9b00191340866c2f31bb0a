@@ -1,0 +1,14 @@
+package utwente.nedap.team23.nedapDashboard.testing;
+
+
+import static org.junit.Assert.assertEquals;
+import junit.Test;
+
+public class StatusCodesTesting {
+	
+	
+	
+	
+	
+
+}

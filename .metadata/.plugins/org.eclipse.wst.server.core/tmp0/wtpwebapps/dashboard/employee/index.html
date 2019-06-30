@@ -75,6 +75,7 @@
 					if (this.status == 200) {
 
 						var executions = JSON.parse(this.responseText);
+						counter = 0;
 						for(exe in executions) {	
 							(function(){
 								var id = executions[exe].jobExecutionID;
@@ -83,6 +84,8 @@
 
 								var btn = document.createElement("button");
 								btn.className="detailed-execution shadow";
+								btn.id = "btn"+ counter;
+								console.log("btn"+ counter);
 								var eid = document.createElement("span");
 								eid.id="eid";
 								eid.style.display="block";
@@ -101,7 +104,6 @@
 
 								stepMapping[executions[exe].jobExecutionID] = executions[exe].links[2].link;
 								paramsMapping[executions[exe].jobExecutionID] = executions[exe].links[1].link;
-								console.log(paramsMapping[executions[exe].links[1].link]);
 
 								if(executions[exe].exitCode == "FAILED") {
 									eec.id = "failed-execution";
@@ -113,9 +115,11 @@
 								btn.appendChild(etc);
 								btn.appendChild(eec);
 								timeline.appendChild(btn);
+								
 							})();
+							counter +=1;
 						}
-						
+						document.getElementById("btn0").click();				
 					}
 				}
 				xhr.open("GET", exeMapping[id], true);
@@ -307,7 +311,6 @@
 					var status = table.getDataTable().getValue(row, 4);
 					populateTimeline(jobId, company, key, jobName, status);
 					openTab(event, 'detailed-tab');
-					document.getElementsByClassName("detailed-job-exec")[0].click();
 				});
 			}
 

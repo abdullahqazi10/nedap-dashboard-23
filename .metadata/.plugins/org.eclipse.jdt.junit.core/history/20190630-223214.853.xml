@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="ResourceTesting" project="dashboard" tests="3" started="3" failures="0" errors="0" ignored="0">
+  <testsuite name="utwente.nedap.team23.nedapDashboard.testing.ResourceTesting" time="1.352">
+    <testcase name="jobsTest" classname="utwente.nedap.team23.nedapDashboard.testing.ResourceTesting" time="1.258"/>
+    <testcase name="executionsTest" classname="utwente.nedap.team23.nedapDashboard.testing.ResourceTesting" time="0.039"/>
+    <testcase name="organizationsTesting" classname="utwente.nedap.team23.nedapDashboard.testing.ResourceTesting" time="0.055"/>
+  </testsuite>
+</testrun>

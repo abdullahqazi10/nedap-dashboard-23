@@ -1,0 +1,59 @@
+package utwente.nedap.team23.nedapDashboard.testing;
+
+
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+public class SecurityTesting extends APITesting {
+	
+	 
+
+	@Test
+	public void UnauthorizedAccess() {
+		
+		// without credentials
+		Response response = client.target(DOMAIN + "dashboard/v1/oauth/token")
+				.request().get();
+		assertEquals(401, response.getStatus());
+		
+		// without token
+		response = restTarget.path("organizations/accounts").request().get();
+		assertEquals(401, response.getStatus());		
+	}
+	
+	
+	@Test 
+	public void ForbiddenAccess() {
+		
+		// JSON Web Token taken from Postman history which is not valid anymore
+		String jwtTech = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMTg4MjQiLCJuYW1lIjoiSn"
+				+ "VsaWFuIE5hdmFycm8iLCJyb2xlIjoidGVjaG5pY2lhbiIsIm9yZ2FuaXphd"
+				+ "GlvbiI6bnVsbCwiaWF0IjoxNTYxNjg2OTY0LCJleHAiOjE1NjE3MTU3NjQsIm"
+				+ "lzc3VlciI6Ik5lZGFwIn0.hStRzLCHtOa8jfHoAVMMU0WWG9KPUp963PTnC5lAjAg";
+		
+		Response response = restTarget.path("organizations/jobs")  // resource only acc. to tech/support
+				.request(MediaType.APPLICATION_JSON).header("Authorization", jwtTech).get();
+		assertEquals(403, response.getStatus());
+		
+		// Token request with wrong credentials
+		response = client.target(DOMAIN + "dashboard/v1/oauth/token")
+				.request().header("Authorization", "Basic " + WRONGCREDENTIALS).get();
+		assertEquals(response.getStatus(), 403);
+		
+		// Request token as Customer
+		restTarget = client.target(DOMAIN + "dashboard/rest/v1/");
+		response = client.target(DOMAIN + "dashboard/v1/oauth/token")		
+				.request().header("Authorization", "Basic " + TECHNICIAN).get();
+		String jwtCustomer = "Bearer " + response.getHeaderString("Bearer");
+		response = restTarget.path("organizations/jobs") // only accessible to tech/support
+				.request(MediaType.APPLICATION_JSON).header("Authorization", jwtCustomer).get();
+		System.out.println(response.getStatus());
+		assertEquals(403, response.getStatus());
+	}
+	
+	
+	
+	
+}

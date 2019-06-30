@@ -49,7 +49,7 @@ public class JobBean {
 
 	
 	public String createSelfLink(Long instanceID, String orgID) {
-		
+			
 		UriBuilder uriBuilder = uriInfo.getBaseUriBuilder().path(OrganizationResource.class)
 		.path(OrganizationResource.class, "delegateToJobs")
 		.resolveTemplate("organizationID", orgID);
