@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="ResourceTesting" project="dashboard" tests="1" started="1" failures="0" errors="0" ignored="0">
-  <testsuite name="utwente.nedap.team23.nedapDashboard.testing.ResourceTesting" time="0.452">
-    <testcase name="organizationsTesting" classname="utwente.nedap.team23.nedapDashboard.testing.ResourceTesting" time="0.452"/>
-  </testsuite>
-</testrun>

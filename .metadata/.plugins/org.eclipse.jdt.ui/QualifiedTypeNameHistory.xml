@@ -2,4 +2,23 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="utwente.nedap.team23.nedapDashboard.model.Person"/>
 <fullyQualifiedTypeName name="utwente.nedap.team23.nedapDashboard.model.Customer"/>
+<fullyQualifiedTypeName name="javax.ws.rs.client.ClientBuilder"/>
+<fullyQualifiedTypeName name="javax.ws.rs.client.Client"/>
+<fullyQualifiedTypeName name="com.sun.research.ws.wadl.Response"/>
+<fullyQualifiedTypeName name="javax.ws.rs.client.Invocation.Builder"/>
+<fullyQualifiedTypeName name="org.glassfish.jersey.internal.util.Base64"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
+<fullyQualifiedTypeName name="javax.ws.rs.core.Context"/>
+<fullyQualifiedTypeName name="javax.ws.rs.core.SecurityContext"/>
+<fullyQualifiedTypeName name="javax.ws.rs.core.Response"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="utwente.nedap.team23.nedapDashboard.model.Organization"/>
+<fullyQualifiedTypeName name="org.junit.Test"/>
+<fullyQualifiedTypeName name="javax.ws.rs.client.WebTarget"/>
+<fullyQualifiedTypeName name="javax.ws.rs.core.MediaType"/>
+<fullyQualifiedTypeName name="utwente.nedap.team23.nedapDashboard.model.BatchJobInstance"/>
+<fullyQualifiedTypeName name="utwente.nedap.team23.nedapDashboard.model.BatchJobExecution"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="utwente.nedap.team23.nedapDashboard.model.BatchStepExecution"/>
+<fullyQualifiedTypeName name="org.junit.Before"/>
 </qualifiedTypeNameHistroy>

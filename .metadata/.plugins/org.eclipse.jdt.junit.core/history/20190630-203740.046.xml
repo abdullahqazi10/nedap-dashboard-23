@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="SecurityTesting" project="dashboard" tests="2" started="2" failures="0" errors="0" ignored="0">
-  <testsuite name="utwente.nedap.team23.nedapDashboard.testing.SecurityTesting" time="0.692">
-    <testcase name="ForbiddenAccess" classname="utwente.nedap.team23.nedapDashboard.testing.SecurityTesting" time="0.655"/>
-    <testcase name="UnauthorizedAccess" classname="utwente.nedap.team23.nedapDashboard.testing.SecurityTesting" time="0.036"/>
-  </testsuite>
-</testrun>

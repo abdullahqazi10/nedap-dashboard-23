@@ -35,10 +35,10 @@ public class DashboardResource {
 		final AuthenticationTokenPayload  details = (AuthenticationTokenPayload) sc.getUserPrincipal();
 
 		if (details.getRole().equalsIgnoreCase("CUSTOMER")) {	
-			response.setHeader("Location", "http://localhost:8080/dashboard/customer/index.html");
+			response.setHeader("Location", "http://localhost:8080/di23_dashboard/customer/index.html");
 			return Response.ok().build();		
 		} else {
-			response.setHeader("Location", "http://localhost:8080/dashboard/employee/index.html");
+			response.setHeader("Location", "http://localhost:8080/di23_dashboard/employee/index.html");
 			return Response.ok().build(); 
 		}	
 	}
