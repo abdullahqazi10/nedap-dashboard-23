@@ -2,8 +2,6 @@ package utwente.nedap.team23.nedapDashboard.resources;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
@@ -11,11 +9,9 @@ import utwente.nedap.team23.nedapDashboard.model.*;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import utwente.nedap.team23.nedapDashboard.database.DatabaseDAO;
+import utwente.nedap.team23.nedapDashboard.database.ResourceDAO;
 import utwente.nedap.team23.nedapDashboard.model.bean.ExecutionBean;
 
 /**
@@ -30,6 +26,39 @@ import utwente.nedap.team23.nedapDashboard.model.bean.ExecutionBean;
 @Path("executions")
 @RolesAllowed({"TECHNICIAN", "SUPPORT", "CUSTOMER"})
 public class ExecutionResource {
+	
+	
+	
+	/**
+	 * Delegates the request to the handler of execution parameters.
+	 * Inherits the authorization roles from the class.
+	 * 
+	 * @return		an <code>ExecutionParamResource</code>
+	 */
+	@Path("{executionID}/execution-parameters")
+	public ExecutionParamResource delegateToParam() { return new ExecutionParamResource(); }
+
+	
+	/**
+	 * Delegates the request to the handler of execution contexts.
+	 * Inherits the authorization roles from the class.
+	 * 
+	 * @return		an <code>ExecutionContextResource</code>
+	 */
+	@Path("{executionID}/execution-contexts")
+	public ExecutionContextResource delegateToContext() { return new ExecutionContextResource(); }
+
+	
+	/**
+	 * Delegates the request to the handler of step executions.
+	 * Inherits the authorization roles from the class.
+	 * 
+	 * @return		a <code>StepExecutionResource</code>
+	 */
+	@Path("{executionID}/step-executions")
+	public StepExecutionResource delegateToStepExe() { return new StepExecutionResource(); }
+	
+	
 	
 	
 	/**
@@ -49,13 +78,13 @@ public class ExecutionResource {
 	public Response getAllExecutions(@BeanParam ExecutionBean bean) {
 
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
+			ResourceDAO rService = ResourceDAO.instance;
 			List<BatchJobExecution> executions;
 
 			if (bean.getStatus() != null) { 
-				executions = dbService.getExecutionsWithStatus(bean.getOrganizationID(), 
+				executions = rService.getExecutionsWithStatus(bean.getOrganizationID(), 
 						bean.getInstanceID(), bean.getStatus());
-			} else { executions = dbService.getExecutions(bean.getInstanceID()); }
+			} else { executions = rService.getExecutions(bean.getInstanceID()); }
 			
 			for (BatchJobExecution exe : executions) {
 				String self = bean.createSelfLink(exe.getJobExecutionID());
@@ -101,7 +130,7 @@ public class ExecutionResource {
 			@PathParam("executionID") long eID) {
 
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
+			ResourceDAO dbService = ResourceDAO.instance;
 			BatchJobExecution bje = dbService.getExecution(bean.getInstanceID(), eID);
 			String self = bean.createSelfLink(bje.getJobExecutionID());
 			String params = bean.createLinkForParams(bje.getJobExecutionID());
@@ -121,34 +150,4 @@ public class ExecutionResource {
 					   .entity("Sorry a mistake happened. Try it later again!").build();	
 		}
 	}
-	
-
-	/**
-	 * Delegates the request to the handler of execution parameters.
-	 * Inherits the authorization roles from the class.
-	 * 
-	 * @return		an <code>ExecutionParamResource</code>
-	 */
-	@Path("{executionID}/execution-parameters")
-	public ExecutionParamResource delegateToParam() { return new ExecutionParamResource(); }
-
-	
-	/**
-	 * Delegates the request to the handler of execution contexts.
-	 * Inherits the authorization roles from the class.
-	 * 
-	 * @return		an <code>ExecutionContextResource</code>
-	 */
-	@Path("{executionID}/execution-contexts")
-	public ExecutionContextResource delegateToContext() { return new ExecutionContextResource(); }
-
-	
-	/**
-	 * Delegates the request to the handler of step executions.
-	 * Inherits the authorization roles from the class.
-	 * 
-	 * @return		a <code>StepExecutionResource</code>
-	 */
-	@Path("{executionID}/step-executions")
-	public StepExecutionResource delegateToStepExe() { return new StepExecutionResource(); }
 }

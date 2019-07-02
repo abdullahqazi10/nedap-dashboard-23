@@ -2,19 +2,13 @@ package utwente.nedap.team23.nedapDashboard.resources;
 
 import java.sql.SQLException;
 import java.util.List;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
-import utwente.nedap.team23.nedapDashboard.database.DatabaseDAO;
+import utwente.nedap.team23.nedapDashboard.database.ResourceDAO;
 import utwente.nedap.team23.nedapDashboard.model.*;
-import utwente.nedap.team23.nedapDashboard.model.bean.OrganizationBean;
 import utwente.nedap.team23.nedapDashboard.model.bean.StepExecutionBean;
-
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-//import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -45,8 +39,8 @@ public class StepExecutionResource {
 	public Response getStepExecutions(@BeanParam StepExecutionBean bean) {
 
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
-			List<BatchStepExecution> stepExecutions = dbService.getStepExecutionFor(bean.getStatus(), 
+			ResourceDAO rService = ResourceDAO.instance;
+			List<BatchStepExecution> stepExecutions = rService.getStepExecutionFor(bean.getStatus(), 
 					bean.getExecutionID());
 			for (BatchStepExecution step : stepExecutions) {
 				String uri = bean.createSelfLink();

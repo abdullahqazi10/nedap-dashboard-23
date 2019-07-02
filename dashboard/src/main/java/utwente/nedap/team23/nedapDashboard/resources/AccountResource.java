@@ -42,8 +42,8 @@ public class AccountResource {
 	public Response getAllAccounts(@BeanParam AccountBean bean) {
 		
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
-			List<Account> accounts = dbService.getAccounts(bean.getLimit(), bean.getOrgID());
+			ResourceDAO resourceService = ResourceDAO.instance;
+			List<Account> accounts = resourceService.getAccounts(bean.getLimit(), bean.getOrgID());
 			for (Account acc : accounts) {
 				String uri = bean.createSelfLink(acc.getAccount_id());
 				acc.addLink("self", uri);
@@ -82,12 +82,12 @@ public class AccountResource {
 
 		try {
 
-			DatabaseDAO dbService = new DatabaseDAO();
+			ResourceDAO rService = ResourceDAO.instance;
 			Account acc;
 			if (bean.getPerID() == null) {
-			acc = dbService.getAccountOf(accID, bean.getOrgID());			
+			acc = rService.getAccountOf(accID, bean.getOrgID());			
 			
-			} else { acc = dbService.getAccountOf(bean.getPerID()); } // get account with owner id
+			} else { acc = rService.getAccountOf(bean.getPerID()); } // get account with owner id
 			// get account with owner id
 
 			return Response.ok().entity(acc).build();

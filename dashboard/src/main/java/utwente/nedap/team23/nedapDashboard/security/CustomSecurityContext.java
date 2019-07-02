@@ -12,7 +12,7 @@ public class CustomSecurityContext implements SecurityContext {
 
 	// Account has to much information.......
 	private AuthenticationTokenPayload claim;
-	private final String authScheme = SecurityContext.BASIC_AUTH;
+	private final String authScheme = "Bearer";
 
 
 	public CustomSecurityContext(AuthenticationTokenPayload claim) { this.claim = claim; }

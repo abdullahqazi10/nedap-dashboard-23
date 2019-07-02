@@ -1,8 +1,6 @@
 package utwente.nedap.team23.nedapDashboard.security;
 
 import java.io.IOException;
-import java.sql.SQLException;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -12,17 +10,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-
-import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.lang.JoseException;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import utwente.nedap.team23.nedapDashboard.database.DatabaseDAO;
-import utwente.nedap.team23.nedapDashboard.model.Account;
 
 /**
  * Interceptor class that intercepts a request to check authentication

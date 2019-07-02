@@ -2,11 +2,10 @@ package utwente.nedap.team23.nedapDashboard.resources;
 
 import java.sql.SQLException;
 import java.util.List;
-
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
-import utwente.nedap.team23.nedapDashboard.database.DatabaseDAO;
+import utwente.nedap.team23.nedapDashboard.database.ResourceDAO;
 import utwente.nedap.team23.nedapDashboard.model.*;
 import utwente.nedap.team23.nedapDashboard.model.bean.JobBean;
 import javax.ws.rs.Path;
@@ -28,6 +27,15 @@ import javax.ws.rs.core.SecurityContext;
 @Path("jobs")
 @RolesAllowed({"TECHNICIAN", "SUPPORT", "CUSTOMER"})
 public class JobResource {
+	
+	/**
+	 * Delegates the request to the handler of executions.
+	 * Inherits the authorization roles from the class.
+	 * 
+	 * @return		an <code>ExecutionResource</code>
+	 */
+	@Path("{jobInstanceID}/executions")
+	public ExecutionResource delegateTo() { return new ExecutionResource(); }
 
 
 	/**
@@ -48,15 +56,15 @@ public class JobResource {
 	public Response getJobs(@BeanParam JobBean bean, @Context SecurityContext sc) {
 
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
+			ResourceDAO rService = ResourceDAO.instance;
 			List<BatchJobInstance> jobs;
 			if (bean.getOrganizationID() != null) {
 
-				jobs = dbService.getJobInstances(bean.getLimit(), bean.getOrganizationID(),
+				jobs = rService.getJobInstances(bean.getLimit(), bean.getOrganizationID(),
 						bean.getStart(), bean.getEnd());			
 			} else { 
 				if (!sc.isUserInRole("CUSTOMER")) {
-					jobs = dbService.getJobInstances(bean.getLimit(), bean.getStart(),
+					jobs = rService.getJobInstances(bean.getLimit(), bean.getStart(),
 							bean.getEnd()); 
 				} else {
 
@@ -104,8 +112,8 @@ public class JobResource {
 			@PathParam("jobInstanceID") long iID) {
 
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
-			BatchJobInstance job = dbService.getJobInstance(iID, bean.getOrganizationID());
+			ResourceDAO rService = ResourceDAO.instance;
+			BatchJobInstance job = rService.getJobInstance(iID, bean.getOrganizationID());
 
 			if (job == null) { 
 				return Response.status(Response.Status.NOT_FOUND)
@@ -123,14 +131,4 @@ public class JobResource {
 					.entity("Sorry a mistake happened. Try it later again!").build();
 		}
 	}
-
-
-	/**
-	 * Delegates the request to the handler of executions.
-	 * Inherits the authorization roles from the class.
-	 * 
-	 * @return		an <code>ExecutionResource</code>
-	 */
-	@Path("{jobInstanceID}/executions")
-	public ExecutionResource delegateTo() { return new ExecutionResource(); }
 }

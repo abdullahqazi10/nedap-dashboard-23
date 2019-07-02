@@ -5,7 +5,7 @@ package utwente.nedap.team23.nedapDashboard.security;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.StringTokenizer;
-import utwente.nedap.team23.nedapDashboard.database.DatabaseDAO;
+import utwente.nedap.team23.nedapDashboard.database.ResourceDAO;
 
 // Inside of Database password will in the future be stored as hash values, mixed with a salt
 // (incoming request with username:password has to be manipulated properly then))
@@ -31,8 +31,8 @@ public class BasicAuthentication {
 		final String password = tokenizer.nextToken();
 		
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
-			final String dbPassw = dbService.getPasswordOf(username);
+			ResourceDAO rService = ResourceDAO.instance;
+			final String dbPassw = rService.getPasswordOf(username);
 			Long userID = dbPassw.equals(password) ? username : null;
 			
 			return userID;		

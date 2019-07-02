@@ -1,5 +1,4 @@
 INDEX VERSION 1.4+/Users/julian./Documents/Study/ComputerScience/Module4 - Data & Information/Project_Nedap_Dashboard/Workspace/.metadata/.plugins/org.eclipse.wst.jsdt.core/indexes
-3506792893.index
 2895224181.index
 3324963924.index
 2748010716.index

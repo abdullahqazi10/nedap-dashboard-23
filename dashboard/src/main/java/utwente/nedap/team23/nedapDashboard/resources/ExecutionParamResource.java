@@ -2,23 +2,15 @@ package utwente.nedap.team23.nedapDashboard.resources;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.BeanParam;
-//import java.util.List;
 import javax.ws.rs.GET;
 import utwente.nedap.team23.nedapDashboard.model.*;
 import utwente.nedap.team23.nedapDashboard.model.bean.ExecutionParamBean;
-
-//import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-//import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import utwente.nedap.team23.nedapDashboard.database.DatabaseDAO;
+import utwente.nedap.team23.nedapDashboard.database.ResourceDAO;
 
 /**
  * Resource location of parameters.
@@ -46,8 +38,8 @@ public class ExecutionParamResource {
 	public Response getParametersFor(@BeanParam ExecutionParamBean bean) {
 
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
-			List<BatchJobExecutionParams> bjeps = dbService.getParametersFor(bean.getExecutionID());
+			ResourceDAO rService = ResourceDAO.instance;
+			List<BatchJobExecutionParams> bjeps = rService.getParametersFor(bean.getExecutionID());
 			for (BatchJobExecutionParams param : bjeps) {
 				String uri = bean.createSelfLink();
 				param.addLink("self", uri);

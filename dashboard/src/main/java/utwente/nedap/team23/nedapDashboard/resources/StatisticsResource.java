@@ -1,7 +1,6 @@
 package utwente.nedap.team23.nedapDashboard.resources;
 
 import java.sql.SQLException;
-
 import java.util.HashMap;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
@@ -10,7 +9,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import utwente.nedap.team23.nedapDashboard.database.DatabaseDAO;
+import utwente.nedap.team23.nedapDashboard.database.StatisticsDAO;
 import utwente.nedap.team23.nedapDashboard.model.JobStatistics;
 import utwente.nedap.team23.nedapDashboard.model.TotalJobsCount;
 
@@ -26,8 +25,8 @@ public class StatisticsResource {
 	public Response getCountOfAllJobs() {
 		
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
-			TotalJobsCount count = dbService.getCount();
+			StatisticsDAO statsService = StatisticsDAO.instance;
+			TotalJobsCount count = statsService.getCount();
 			
 			return Response.ok().entity(count).build();
 		} catch(SQLException e) {
@@ -44,8 +43,8 @@ public class StatisticsResource {
 	public Response getStatsOfYear(@PathParam("year") int year) {
 		
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
-			HashMap<Integer, JobStatistics> stats = dbService.getJobStatsFrom(year);
+			StatisticsDAO statsService = StatisticsDAO.instance;
+			HashMap<Integer, JobStatistics> stats = statsService.getJobStatsFrom(year);
 			
 			return Response.ok().entity(stats).build();
 		} catch(SQLException e) {
@@ -63,8 +62,8 @@ public class StatisticsResource {
 			@PathParam("month") int month) {
 		
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
-			HashMap<Integer, JobStatistics> stats = dbService.getJobStatsFrom(year, month);
+			StatisticsDAO statsService = StatisticsDAO.instance;
+			HashMap<Integer, JobStatistics> stats = statsService.getJobStatsFrom(year, month);
 			
 			return Response.ok().entity(stats).build();
 		} catch(SQLException e) {

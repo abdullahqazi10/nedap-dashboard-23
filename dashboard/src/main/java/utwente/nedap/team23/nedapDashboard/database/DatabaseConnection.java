@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-// Perhaps have to do it thread safe!
+
 public class DatabaseConnection {
 
 	private static Connection instance;

@@ -2,19 +2,16 @@ package utwente.nedap.team23.nedapDashboard.resources;
 
 import java.sql.SQLException;
 import java.util.List;
-
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.BeanParam;
-//import java.util.List;
 import javax.ws.rs.GET;
 import utwente.nedap.team23.nedapDashboard.model.*;
 import utwente.nedap.team23.nedapDashboard.model.bean.ExecutionContextBean;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import utwente.nedap.team23.nedapDashboard.database.DatabaseDAO;
+import utwente.nedap.team23.nedapDashboard.database.ResourceDAO;
 
 /**
  * Resource location of execution contexts.
@@ -43,7 +40,7 @@ public class ExecutionContextResource {
 	public Response getContextFor(@BeanParam ExecutionContextBean bean) {
 
 		try {
-			DatabaseDAO dbService = new DatabaseDAO();
+			ResourceDAO dbService = ResourceDAO.instance;
 			List<BatchJobExecutionContext> contexts = dbService.getContextsFor(bean.getExecutionID());
 			for (BatchJobExecutionContext context : contexts) {
 				String uri = bean.createSelfLink();

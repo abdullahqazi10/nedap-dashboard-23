@@ -1,6 +1,7 @@
 package utwente.nedap.team23.nedapDashboard.security;
 
 import java.io.IOException;
+
 import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import org.jose4j.lang.JoseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import utwente.nedap.team23.nedapDashboard.database.DatabaseDAO;
+import utwente.nedap.team23.nedapDashboard.database.ResourceDAO;
 import utwente.nedap.team23.nedapDashboard.model.Account;
 
 public class TokenServlet extends HttpServlet {
@@ -27,8 +28,8 @@ public class TokenServlet extends HttpServlet {
 			if (user != null) {
 				try {
 
-					DatabaseDAO dbService = new DatabaseDAO();
-					Account acc = dbService.getAccountOf(user);
+					ResourceDAO rService = ResourceDAO.instance;
+					Account acc = rService.getAccountOf(user);
 					AuthenticationTokenService tkService = new AuthenticationTokenService();
 					String jwt = tkService.issueToken(acc);
 					httpResponse.setStatus(204);
